@@ -1,0 +1,219 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% block content %}
+  <div class="title">
+    <h3>Calendar</h3>
+
+    <button style="height: 40px;" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addEventModal">
+      <img src="{% static 'icons/white.png' %}" alt="" />
+      add event
+    </button>
+  </div>
+  <div class="calendar-container">
+    <div class="calendar-grid">
+      <div class="calendar-header" style="grid-column: span 5;">
+        <a href="?month={{ prev_month }}&year={{ prev_year }}"><img style="" src="{% static 'icons/back.png' %}" alt="" /></a>
+        <h2>{{ month_name }} {{ year }}</h2>
+        <a href="?month={{ next_month }}&year={{ next_year }}"><img style="" src="{% static 'icons/go.png' %}" alt="" /></a>
+      </div>
+
+      {% for day in weekdays %}
+        <div class="dayinweek">{{ day }}</div>
+      {% endfor %}
+      {% comment %}Hien thi ngay thang truoc{% endcomment %}
+      {% for day in empty_days %}
+        <div class="calendar-day text-muted bg-light">
+          <div style="opacity: 0.2;" class="day-number">{{ day }}</div>
+        </div>
+      {% endfor %}
+
+      {% for item in calendar_data %}
+        <div class="calendar-day">
+          <div class="day-number">{{ item.day }}</div>
+
+          <div class="event-stack">
+            {% for event in item.events|slice:':3' %}
+              <div class="event-card">
+                <div class="event-name">{{ event.name }}</div>
+                <div class="event-time">{{ event.time }}</div>
+              </div>
+            {% endfor %}
+          </div>
+
+          {% if item.events|length > 3 %}
+            <div class="more-events" onclick="openModal({{ item.day }})">+{{ item.events|length|add:'-3' }}</div>
+
+            <!-- Modal (ẩn mặc định) -->
+            <div class="event-modal" id="modal-{{ item.day }}">
+              <div class="modal-content">
+                <span class="close" onclick="closeModal({{ item.day }})">&times;</span>
+                <h4>Events on {{ item.day }}/{{ month }}/{{ year }}</h4>
+                <ul>
+                  {% for event in item.events %}
+                    <li>
+                      <strong>{{ event.name }}</strong><br />
+                      <small>{{ event.time }}</small>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="addEventModal" tabindex="-1" aria-labelledby="addEventModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4 shadow">
+        <div class="modal-header border-0">
+          <h5 class="modal-title fw-bold" id="addEventModalLabel">Add Event</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <form action="{% url 'calendar:add_event' %}" method="POST">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label class="form-label">Event Name</label>
+              <input type="text" class="form-control" name="name" placeholder="Enter event name" />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Event Category</label>
+              <select class="form-select" name="category">
+                <option>Corporate Event</option>
+                <option>Birthday</option>
+                <option>Meeting</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Priority</label>
+              <select class="form-select" name="priority">
+                <option>Low</option>
+                <option selected>Medium</option>
+                <option>High</option>
+              </select>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col">
+                <label class="form-label">Date</label>
+                <input type="date" name="date" class="form-control" />
+              </div>
+              <div class="col">
+                <label class="form-label">Time</label>
+                <input type="time" name="time" class="form-control" />
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Description</label>
+              <textarea class="form-control" name="description" rows="3" placeholder="Add some description of the event"></textarea>
+            </div>
+
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="repeatToggle" />
+              <label class="form-check-label" for="repeatToggle">Repeat Event</label>
+            </div>
+
+            <!-- Repeat Options -->
+            <div id="repeatOptions" style="display: none; margin-top: 10px;">
+              <!-- Repeat Type -->
+              <div class="mb-2">
+                <label class="form-label">Repeat Type:</label><br />
+                <div id="repeatTypeGroup" class="btn-group btn-group-sm" role="group">
+                  <button type="button" class="btn btn-outline-primary">Daily</button>
+                  <button type="button" class="btn btn-outline-primary">Weekly</button>
+                  <button type="button" class="btn btn-outline-primary">Monthly</button>
+                </div>
+              </div>
+
+              <!-- On these days -->
+              <div class="mb-2">
+                <label class="form-label">On these days:</label><br />
+                <div id="daysGroup" class="btn-group btn-group-sm" role="group">
+                  <button type="button" class="btn btn-outline-secondary">Mon</button>
+                  <button type="button" class="btn btn-outline-secondary">Tue</button>
+                  <button type="button" class="btn btn-outline-secondary">Wed</button>
+                  <button type="button" class="btn btn-outline-secondary">Thu</button>
+                  <button type="button" class="btn btn-outline-secondary">Fri</button>
+                  <button type="button" class="btn btn-outline-secondary">Sat</button>
+                  <button type="button" class="btn btn-outline-secondary">Sun</button>
+                </div>
+              </div>
+
+              <!-- Repeat Every Day -->
+              <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="repeatEveryDay" />
+                <label class="form-check-label" for="repeatEveryDay">Repeat every day</label>
+              </div>
+
+              <!-- Time Picker -->
+              <div class="mb-2">
+                <label class="form-label">Time:</label>
+                <input type="time" class="form-control form-control-sm" name="repeat_time" />
+              </div>
+            </div>
+
+            <div class="modal-footer border-0">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" class="btn btn-primary">Save Event</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const repeatToggle = document.getElementById('repeatToggle')
+      const repeatOptions = document.getElementById('repeatOptions')
+    
+      repeatToggle.addEventListener('change', function () {
+        repeatOptions.style.display = repeatToggle.checked ? 'block' : 'none'
+      })
+    
+      // Repeat Type: chỉ chọn 1
+      const repeatTypeButtons = document.querySelectorAll('#repeatTypeGroup button')
+      repeatTypeButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          repeatTypeButtons.forEach((b) => b.classList.remove('btn-toggle-active')) // bỏ active cũ
+          btn.classList.add('btn-toggle-active') // thêm active cho nút mới
+        })
+      })
+    
+      // Days: chọn nhiều nút tùy ý (toggle)
+      const daysButtons = document.querySelectorAll('#daysGroup button')
+      daysButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          btn.classList.toggle('btn-toggle-active')
+        })
+      })
+    })
+  </script>
+  <script>
+  function openModal(day) {
+    const modal = document.getElementById(`modal-${day}`);
+    if (modal) modal.style.display = "block";
+  }
+
+  function closeModal(day) {
+    const modal = document.getElementById(`modal-${day}`);
+    if (modal) modal.style.display = "none";
+  }
+
+  // Optional: Đóng modal khi click ra ngoài
+  window.onclick = function(event) {
+    const modals = document.querySelectorAll(".event-modal");
+    modals.forEach(modal => {
+      if (event.target === modal) {
+        modal.style.display = "none";
+      }
+    });
+  }
+</script>
+{% endblock %}

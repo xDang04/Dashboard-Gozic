@@ -44,4 +44,7 @@ urlpatterns = [
 
     path('dashboard/', include('DashBoard.urls')),
 
+    path('calendar/', include('Calendar.urls')),
+    path('profile/', include('Profile.urls')),
+    
 ]
