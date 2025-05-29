@@ -43,7 +43,9 @@ INSTALLED_APPS = [
     'Calendar',
     'DashBoard',
     'Projects',
-    'channels',
+    'rest_framework',
+    'rest_framework_simplejwt.token_blacklist', 
+    'drf_yasg', 
 ]
 
 AUTH_USER_MODEL = 'Account.Account'
@@ -144,3 +146,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
+#rest_framework
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
