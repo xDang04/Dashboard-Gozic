@@ -47,4 +47,6 @@ urlpatterns = [
     path('calendar/', include('Calendar.urls')),
     path('profile/', include('Profile.urls')),
     
+    path('messenger/', include('Messenger.urls')),
+    path('accounts/', include('allauth.urls')),
 ]
