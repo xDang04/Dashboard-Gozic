@@ -5,9 +5,15 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny , IsAuthenticated
+from rest_framework.parsers import JSONParser
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
+
 
 class ProjectViewSet(APIView):
+    permission_classes = [IsAuthenticated]         
+    authentication_classes = [JWTAuthentication]
     @swagger_auto_schema(
         operation_description="Lấy danh sách dự án",
         manual_parameters=[
@@ -33,6 +39,8 @@ class ProjectViewSet(APIView):
         return post_project(request.data)
     
 class ProjectDetailViewSet(APIView):
+    permission_classes = [IsAuthenticated]         
+    authentication_classes = [JWTAuthentication] 
     @swagger_auto_schema(
         operation_summary="Lấy chi tiết danh mục theo ID",
         tags=["Project"]
@@ -58,6 +66,8 @@ class ProjectDetailViewSet(APIView):
     
     
 class TaskViewSet(APIView):
+    permission_classes = [IsAuthenticated]         
+    authentication_classes = [JWTAuthentication] 
     @swagger_auto_schema(
         operation_description="Lấy nhiệm vụ dự án",
         manual_parameters=[
@@ -83,6 +93,8 @@ class TaskViewSet(APIView):
         return post_task(request.data)
     
 class TaskDetailViewSet(APIView):
+    permission_classes = [IsAuthenticated]         
+    authentication_classes = [JWTAuthentication] 
     @swagger_auto_schema(
         operation_summary="Lấy chi tiết nhiệm vụ của dự án theo ID",
         tags=["Task"]

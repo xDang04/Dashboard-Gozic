@@ -1,5 +1,6 @@
-from ..models import Projects , Task
-from ..serializers import * 
+from Projects.serializers import TaskSerializers
+from Projects.models import Projects , Task
+from Projects.serializers import * 
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
