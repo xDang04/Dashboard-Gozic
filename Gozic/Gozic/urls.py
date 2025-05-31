@@ -27,16 +27,16 @@ schema_view = get_schema_view(
     openapi.Info(
         title="Gozic API",
         default_version='v1',
-        description="Tài liệu API cho hệ thống Dashboard Gozic",
     ),
     public=True,
     permission_classes=(permissions.AllowAny,),
+    authentication_classes=[],
 )
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/projects/', include('Projects.urls')),
-
-    path('api/accounts/', include('Account.urls')),
+    path('projects/', include('Projects.urls')),
+    path('Account/' , include('Account.urls')),
+    
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),

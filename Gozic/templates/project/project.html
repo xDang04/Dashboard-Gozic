@@ -12,7 +12,7 @@
   </div>
 </div>
 
-{% comment %} {% if view == "board" %}
+ {% if view == "board" %}
 <!-- BOARD VIEW -->
 <div class="row">
   {% for status in statuses %}
@@ -37,7 +37,7 @@
   {% endfor %}
 </div>
 
-{% else %} {% endcomment %}
+{% else %} 
 <!-- LIST VIEW -->
 <table class="table table-hover bg-white rounded shadow-sm">
   <thead class="table-light">
@@ -75,5 +75,5 @@
     {% endfor %}
   </tbody>
 </table>
-{% comment %} {% endif %} {% endcomment %}
+{% endif %} 
 {% endblock %}
