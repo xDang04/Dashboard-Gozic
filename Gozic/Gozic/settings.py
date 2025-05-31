@@ -31,8 +31,9 @@ ALLOWED_HOSTS = ['*']
 
 CSRF_TRUSTED_ORIGINS = [ 'https://*' ]
 # Application definition
-
+SITE_ID = 1
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,10 +42,16 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_htmx',
     'django.contrib.sites',
+    'allauth',
+    'allauth.account',
     'Account',
+    
     'Calendar',
     'DashBoard',
     'Projects',
+    'rest_framework',
+    'rest_framework_simplejwt.token_blacklist', 
+    'drf_yasg', 
     'channels',
     'Messenger',
 ]
@@ -60,6 +67,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_htmx.middleware.HtmxMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'Gozic.urls'
@@ -149,3 +157,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
+#rest_framework
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
