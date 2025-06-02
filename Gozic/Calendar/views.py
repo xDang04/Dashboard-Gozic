@@ -21,8 +21,10 @@ def calendar_view(request):
     prev_month_last_day = calendar.monthrange(prev_year, prev_month)[1]
 
     # Ngày cuối cùng của tháng trước để chèn vào các ô trống đầu tuần
+    max_prev_days = min(first_weekday, 4)
+
     empty_days = [
-        prev_month_last_day - i for i in reversed(range(first_weekday))
+        prev_month_last_day - i for i in reversed(range(max_prev_days))
     ]
 
     weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri']

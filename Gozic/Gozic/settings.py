@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'Calendar',
     'DashBoard',
     'Projects',
+    'Profile',
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist', 
     'drf_yasg', 

@@ -135,11 +135,11 @@
 }
 
 /* Modal box */
-.modal-content {
+.modal-content1 {
     background-color: #fff;
     margin: 10% auto;
-    padding: 20px;
     width: 300px;
+    padding: 20px;
     border-radius: 8px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     position: relative;

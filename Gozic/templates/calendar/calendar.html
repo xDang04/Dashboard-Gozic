@@ -45,7 +45,7 @@
 
             <!-- Modal (ẩn mặc định) -->
             <div class="event-modal" id="modal-{{ item.day }}">
-              <div class="modal-content">
+              <div class="modal-content1">
                 <span class="close" onclick="closeModal({{ item.day }})">&times;</span>
                 <h4>Events on {{ item.day }}/{{ month }}/{{ year }}</h4>
                 <ul>
@@ -74,7 +74,7 @@
         </div>
 
         <div class="modal-body">
-          <form action="{% url 'calendar:add_event' %}" method="POST">
+          <form class="formcalendar" action="{% url 'calendar:add_event' %}" method="POST">
             {% csrf_token %}
             <div class="mb-3">
               <label class="form-label">Event Name</label>
