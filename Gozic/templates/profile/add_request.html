@@ -1,0 +1,13 @@
+{% extends "profile/layout_profile.html" %}
+
+{% block profile %}
+<form method="POST">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Send Request</button>
+</form>
+
+
+{% endblock profile %}
+
+
