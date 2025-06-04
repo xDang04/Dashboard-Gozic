@@ -14,3 +14,4 @@ urlpatterns = [
     path('projects_detail/', projects_detail, name='projects_detail'),  
     
 ]
+ 

@@ -8,8 +8,7 @@ from Account.models import Account
 from .models import Event
 from django.views.decorators.csrf import csrf_protect
 
-
-
+ 
 def calendar_view(request):
     year = int(request.GET.get('year', date.today().year))
     month = int(request.GET.get('month', date.today().month))
