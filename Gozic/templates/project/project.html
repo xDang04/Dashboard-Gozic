@@ -6,8 +6,6 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
   <h4>Projects</h4>
   <div>
-    <a href="?view=list" class="btn btn-outline-secondary me-2">List View</a>
-    <a href="?view=board" class="btn btn-outline-secondary">Board View</a>
     <a href="{% url 'add_project' %}" class="btn btn-primary ms-3">+ Add Project</a>
   </div>
 </div>
@@ -53,7 +51,7 @@
   </thead>
   <tbody>
     {% for project in projects %}
-    <tr>
+  <tr onclick="window.location.href='{% url 'projects_detail' %}?project_id={{ project.id }}'" style="cursor: pointer;">
       <td>{{ project.name }}</td>
       <td>{{ project.create_at|date:"Y-m-d" }}</td>
       <td>{{ project.dealine|date:"Y-m-d" }}</td>

@@ -16,7 +16,7 @@ def get_task_by_id(pk):
     return get_object_or_404(Task , pk = pk)
 
 def post_task(data):
-    serializer = TaskSerializers(data = data)
+    serializer = TaskSerializers(data = data) 
     if serializer.is_valid():
         serializer.save()
         return Response({"messange":"Đã thêm thành công"} , status= status.HTTP_201_CREATED)

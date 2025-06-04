@@ -14,3 +14,4 @@ class TaskSerializers(serializers.ModelSerializer):
         model = Task
         fields ='__all__'
         
+ 

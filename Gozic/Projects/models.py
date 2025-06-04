@@ -2,14 +2,14 @@ from django.db import models
 from Account.models import * 
 # Create your models here.
 
-STATUS_CHOICES = [
+class Task(models.Model):
+    STATUS_CHOICES = [
         ("To Do", "To Do"),
         ("In Progress", "In Progress"),
         ("In Review", "In Review"),
         ("Done", "Done"),
         ("Backlog", "Backlog"),
     ]
-class Task(models.Model):
     name = models.CharField(max_length=255)
     project = models.ForeignKey('Projects', on_delete=models.CASCADE, null = True , related_name='tasks')  
     description = models.CharField(max_length=255)
@@ -22,8 +22,15 @@ class Task(models.Model):
     
     def __str__(self):
         return self.name
-    
+     
 class Projects(models.Model):
+    STATUS_CHOICES = [
+        ("To Do", "To Do"),
+        ("In Progress", "In Progress"),
+        ("In Review", "In Review"),
+        ("Done", "Done"),
+        ("Backlog", "Backlog"),
+    ]
     name = models.CharField(max_length=255)
     description = models.CharField(max_length=255)
     number = models.CharField(max_length=30)

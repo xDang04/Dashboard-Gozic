@@ -23,7 +23,7 @@ from drf_yasg import openapi
 
 
 
-schema_view = get_schema_view(
+schema_view = get_schema_view( 
     openapi.Info(
         title="Gozic API",
         default_version='v1',
@@ -35,7 +35,8 @@ schema_view = get_schema_view(
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('projects/', include('Projects.urls')),
-    path('Account/' , include('Account.urls')),
+    path('vacation/', include('Vacations.urls')),
+    path('' , include('Account.urls')),
     
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
@@ -44,4 +45,9 @@ urlpatterns = [
 
     path('dashboard/', include('DashBoard.urls')),
 
+    path('calendar/', include('Calendar.urls')),
+    path('profile/', include('Profile.urls')),
+    
+    path('messenger/', include('Messenger.urls')),
+    path('accounts/', include('allauth.urls')),
 ]

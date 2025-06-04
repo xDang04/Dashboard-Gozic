@@ -13,4 +13,5 @@ class LoginSerializers(serializers.ModelSerializer):
     password = serializers.CharField()
     class Meta:
         model = Account
-        fields = ['username' , 'password']
+        fields = ['username' , 'password'] 
+

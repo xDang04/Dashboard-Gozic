@@ -16,7 +16,7 @@ def get_project_by_id(pk):
 
 def post_project(data):
     serializer = ProjectSerializers(data = data)
-    if serializer.is_valid():
+    if serializer.is_valid(): 
         serializer.save()
         return Response({"messange":"Đã thêm thành công"} , status= status.HTTP_201_CREATED)
     return Response(serializer.errors , status= status.HTTP_400_BAD_REQUEST)

@@ -14,5 +14,5 @@ def get_accounts_for_month(year,month):
         day_accounts_map.setdefault(day, []).append(acc)
     return day_accounts_map
 
-def get_birthdays_in_month(month: int):
+def get_birthdays_in_month(month: int): 
     return Account.objects.filter(birthday__month=month)
