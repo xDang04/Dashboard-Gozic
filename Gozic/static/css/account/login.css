@@ -1,0 +1,130 @@
+ * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body, html {
+      height: 100%;
+      background-color: #f8f9fa;
+    }
+
+    .login-container {
+      display: flex;
+      height: 100vh;
+    }
+
+    .left-panel {
+      flex: 1;
+      background-color: #2f80ed;
+      color: white;
+      padding: 60px 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border-top-left-radius: 12px;
+      border-bottom-left-radius: 12px;
+    }
+
+    .left-panel h1 {
+      font-size: 28px;
+      margin-bottom: 12px;
+    }
+
+    .left-panel p {
+      font-size: 20px;
+      line-height: 1.5;
+      margin-bottom: 30px;
+    }
+
+    .left-panel img {
+      max-width: 100%;
+      margin-top: 20px;
+    }
+
+    .right-panel {
+      flex: 1;
+      background-color: #fff;
+      padding: 80px 60px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .right-panel h2 {
+      margin-bottom: 30px;
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    .form-actions input[type="checkbox"] {
+      margin-right: 6px;
+    }
+
+    .form-actions a {
+      color: #2f80ed;
+      text-decoration: none;
+    }
+
+    .form-actions a:hover {
+      text-decoration: underline;
+    }
+
+    .btn {
+      background-color: #2f80ed;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 16px;
+      transition: background 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #1a60d4;
+    }
+
+    .register-link {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+    }
+
+    .register-link a {
+      color: #2f80ed;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .register-link a:hover {
+      text-decoration: underline;
+    }
