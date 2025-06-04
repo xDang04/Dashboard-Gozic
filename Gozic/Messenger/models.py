@@ -6,6 +6,11 @@ class ChatGroup(models.Model):
     name = models.CharField(max_length=100, unique=True)
     users_online = models.ManyToManyField(Account, related_name="online_in_groups", blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    members = models.ManyToManyField(Account, related_name="members_groups", blank=True)
+    is_group = models.BooleanField(default=True)
+    groupchat_name = models.CharField(max_length=100, null=True, blank=True)
+    admin = models.ForeignKey(Account, related_name='groupchats', blank=True, null=True, on_delete=models.SET_NULL)
+
 
     def __str__(self):
         return self.name
