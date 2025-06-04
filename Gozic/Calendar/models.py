@@ -1,7 +1,5 @@
 from django.db import models
 
-# Create your models here.
-
 class Event(models.Model):
     name = models.CharField(max_length=255)
     category = models.CharField(max_length=100)
@@ -10,6 +8,8 @@ class Event(models.Model):
     time = models.TimeField()
     description = models.TextField(blank=True)
     repeat = models.BooleanField(default=False)
+
+
 
     def __str__(self):
         return self.name

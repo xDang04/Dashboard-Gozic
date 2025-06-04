@@ -37,7 +37,6 @@ def projects_detail(request):
     })
 def project_add_view(request):
     accounts = Account.objects.all()
-
     if request.method == "POST":
         data = {
             "name": request.POST.get("name"),
@@ -49,9 +48,11 @@ def project_add_view(request):
             "reporter": request.POST.get("reporter"),
             "assignees": request.POST.getlist("assignees"),  
         }
-
         response = post_project(data)
 
         if response.status_code == 201:
             return redirect("projects_view")
+
+    return render(request, 'project/add_project.html', {'accounts': accounts})
+
     return render(request, 'project/add_project.html', {'accounts': accounts})

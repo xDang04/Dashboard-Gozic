@@ -12,3 +12,5 @@ class Event(models.Model):
     repeat = models.BooleanField(default=False)
     def __str__(self):
         return self.name
+
+

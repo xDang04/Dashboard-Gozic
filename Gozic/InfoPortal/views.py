@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from django.shortcuts import render, redirect
 from datetime import date
 from services import calendar_services
@@ -7,7 +8,7 @@ import calendar
 from Account.models import Account
 from .models import Event
 from django.views.decorators.csrf import csrf_protect
-
+from django.shortcuts import render
  
 def calendar_view(request):
     year = int(request.GET.get('year', date.today().year))
@@ -84,3 +85,7 @@ def add_event(request):
         )
         return redirect('calendar:calendar')  # hoặc URL bạn muốn quay về
     return redirect('calendar:calendar')
+
+
+
+# Create your views here.
