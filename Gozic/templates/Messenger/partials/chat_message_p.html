@@ -1,9 +1,9 @@
 <div id="chat_messages" hx-swap-oob="beforeend">
 <div class="fade-in-up">
 {% include 'Messenger/chat_message.html' %}
-</div>
+{% comment %} </div>
 
-{% comment %} <style>
+ <style>
     @keyframes fadeInAndUp {
         from { opacity: 0; transform: translateY(12px); }
         to { opacity: 1; transform: translateY(0px); }
@@ -13,5 +13,5 @@
     }
 </style>
 
-<script>scrollToBottom()</script> {% endcomment %}
-</div>
+<script>scrollToBottom()</script>
+</div> {% endcomment %}
