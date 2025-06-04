@@ -20,6 +20,8 @@ from rest_framework_simplejwt.views import *
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 
@@ -49,4 +51,9 @@ urlpatterns = [
     
     path('messenger/', include('Messenger.urls')),
     path('accounts/', include('allauth.urls')),
-]
+    path('infoportal/', include('InfoPortal.urls')),
+    path("ckeditor/", include("ckeditor_custom.ckeditor_urls")),
+] 
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
