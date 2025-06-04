@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractUser
 # Create your models here.
 class Account(AbstractUser):
     # Thêm các trường mới
-    email = models.EmailField(max_length=255)
+    email = models.EmailField(max_length=255)py
     age = models.IntegerField(max_length = 20)
     phone = models.CharField(max_length=20, blank=True, null=True)
     birthday = models.DateField(blank=True, null=True)
