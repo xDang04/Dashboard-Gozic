@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'Account',
-    
+    'InfoPortal',
     'Calendar',
     'DashBoard',
     'Projects',
@@ -54,6 +54,8 @@ INSTALLED_APPS = [
     'drf_yasg', 
     'channels',
     'Messenger',
+    'ckeditor',
+    'ckeditor_uploader', 
 ]
 
 AUTH_USER_MODEL = 'Account.Account'
@@ -157,10 +159,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
-
+CKEDITOR_UPLOAD_PATH = "uploads/"
 #rest_framework
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
 }
+
+# Tùy chọn thêm: cho phép upload ảnh bất kỳ định dạng gì
+CKEDITOR_ALLOW_NONIMAGE_FILES = True
