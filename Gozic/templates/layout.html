@@ -25,6 +25,8 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/messenger/bodyMessage.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/infoPortal/infoPortal.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/layout.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/project/project.css' %}">
+    
     <link rel="stylesheet" type="text/css" href="{% static 'css/btn.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/infoPortal/fileCustom.css' %}">  
   </head>
@@ -38,7 +40,7 @@
         <a href="{% url 'dashboard' %}" class="">🏠 Dashboard</a>
         <a href="{% url 'projects_view' %}">📁 Projects</a>
         <a href="{% url 'calendar:calendar' %}">📅 Calendar</a>
-        <a href="#">🌴 Vacations</a>
+        <a href="{% url 'vacations_view' %}">🌴 Vacations</a>
         <a href="#">👥 Employees</a>
         <a href="#">💬 Messenger</a>
         <a href="#">ℹ️ Info Portal</a>

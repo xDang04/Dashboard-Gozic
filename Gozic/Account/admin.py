@@ -3,6 +3,7 @@ from .models import Account
 
 
 
+
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
         ('Personal info', {'fields': ('first_name', 'last_name', 'email', 'phone', 'birthday', 'position', 'location', 'company', 'skype', 'image')}),
@@ -15,6 +16,7 @@ from .models import Account
             'fields': ('username', 'password1', 'password2', 'email', 'first_name', 'last_name', 'phone', 'birthday', 'position', 'location', 'company', 'skype', 'image'),
         }),
     )
+
 
 
 admin.site.register(Account)
