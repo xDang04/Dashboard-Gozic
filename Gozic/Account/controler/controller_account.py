@@ -70,7 +70,6 @@ class AccountDetailViewSet(APIView):
 class LoginSerializerView(APIView):
     permission_classes = [IsAuthenticated]         
     authentication_classes = [JWTAuthentication]
-    permission_class = [AllowAny]
     @swagger_auto_schema(
         request_body=LoginSerializers,  # để hiện input khi đặt tên
         operation_summary="Đăng Nhập người dùng",

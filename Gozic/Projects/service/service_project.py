@@ -12,11 +12,12 @@ def get_all_project(name = None):
     return project
 
 def get_project_by_id(pk):
-    return get_object_or_404(Projects , pk = pk)
-
+    project =  get_object_or_404(Projects , pk = pk)
+    serializer = ProjectSerializers(project)
+    return Response(serializer.data)
 def post_project(data):
     serializer = ProjectSerializers(data = data)
-    if serializer.is_valid():
+    if serializer.is_valid(): 
         serializer.save()
         return Response({"messange":"Đã thêm thành công"} , status= status.HTTP_201_CREATED)
     return Response(serializer.errors , status= status.HTTP_400_BAD_REQUEST)

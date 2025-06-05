@@ -43,8 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_htmx',
     'django.contrib.sites',
-    'allauth',
-    'allauth.account',
+    # 'allauth',
+    # 'allauth.account',
     'Account',
     'InfoPortal',
     'Calendar',
@@ -55,10 +55,10 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist', 
     'drf_yasg', 
     'ckeditor',
+    'Vacations',
     'ckeditor_uploader', 
     'Support',
     'widget_tweaks',
-    'ckeditor_uploader',
 
 ]
 
@@ -74,7 +74,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_htmx.middleware.HtmxMiddleware',
-    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'Gozic.urls'
@@ -171,4 +170,15 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+}
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header',
+            'description': 'Nhập token theo định dạng: **Bearer &lt;token&gt;**',
+        }
+    },
+    'USE_SESSION_AUTH': False,
 }

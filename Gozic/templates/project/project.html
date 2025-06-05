@@ -51,7 +51,7 @@
   </thead>
   <tbody>
     {% for project in projects %}
-    <tr>
+  <tr onclick="window.location.href='{% url 'projects_detail' %}?project_id={{ project.id }}'" style="cursor: pointer;">
       <td>{{ project.name }}</td>
       <td>{{ project.create_at|date:"Y-m-d" }}</td>
       <td>{{ project.dealine|date:"Y-m-d" }}</td>

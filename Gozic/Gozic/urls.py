@@ -36,7 +36,9 @@ schema_view = get_schema_view(
 )
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/projects/', include('Projects.urls')),
+    path('projects/', include('Projects.urls')),
+    path('vacation/', include('Vacations.urls')),
+    path('' , include('Account.urls')),
 
     path('api/accounts/', include('Account.urls')),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
@@ -50,7 +52,7 @@ urlpatterns = [
     path('profile/', include('Profile.urls')),
     
     path('messenger/', include('Messenger.urls')),
-    path('accounts/', include('allauth.urls')),
+    # path('accounts/', include('allauth.urls')),
     path('infoportal/', include('InfoPortal.urls')),
     path("ckeditor/", include("ckeditor_custom.ckeditor_urls")),
     path("support/",include("Support.urls"))

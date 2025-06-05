@@ -11,4 +11,7 @@ urlpatterns = [
 
     path('ui/', projects_view, name='projects_view'),
     path('add/', project_add_view, name='add_project'),  
+    path('projects_detail/', projects_detail, name='projects_detail'),  
+    
 ]
+ 
