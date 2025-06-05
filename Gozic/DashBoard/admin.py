@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from .models import Account
+from Account.models import Account
 
 class CustomUserAdmin(UserAdmin):
     model = Account
@@ -15,4 +15,3 @@ class CustomUserAdmin(UserAdmin):
         (None, {'fields': ('phone', 'birthday', 'position', 'location', 'company', 'skype', 'image')}),
     )
 
-admin.site.register(Account, CustomUserAdmin)

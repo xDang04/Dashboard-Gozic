@@ -49,10 +49,13 @@ INSTALLED_APPS = [
     'InfoPortal',
     'Calendar',
     'DashBoard',
+    'Messenger',
     'Projects',
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist', 
     'drf_yasg', 
+    'ckeditor',
+    'ckeditor_uploader',
 ]
 
 

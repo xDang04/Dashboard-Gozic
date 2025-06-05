@@ -15,9 +15,6 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.conf import settings
-from django.conf.urls.static import static
-import os
 from django.urls import path, include
 from rest_framework_simplejwt.views import *
 from rest_framework import permissions
@@ -32,16 +29,16 @@ schema_view = get_schema_view(
     openapi.Info(
         title="Gozic API",
         default_version='v1',
+        description="Tài liệu API cho hệ thống Dashboard Gozic",
     ),
     public=True,
     permission_classes=(permissions.AllowAny,),
-    authentication_classes=[],
 )
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('projects/', include('Projects.urls')),
-    path('' , include('Account.urls')),
-    
+    path('api/projects/', include('Projects.urls')),
+
+    path('api/accounts/', include('Account.urls')),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
@@ -52,4 +49,11 @@ urlpatterns = [
     path('calendar/', include('Calendar.urls')),
     path('profile/', include('Profile.urls')),
     
-]
+    path('messenger/', include('Messenger.urls')),
+    path('accounts/', include('allauth.urls')),
+    path('infoportal/', include('InfoPortal.urls')),
+    path("ckeditor/", include("ckeditor_custom.ckeditor_urls")),
+] 
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
