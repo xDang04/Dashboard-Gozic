@@ -5,6 +5,12 @@
   <head>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="{% static 'css/profile/layout_profile.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/profile/vacation.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/profile/settings.css' %}" />
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   </head>
 
   <div class="d-flex">
@@ -57,52 +63,12 @@
 
         <!-- Right Projects -->
         <div class=" col-md-8">
-          <div class="linkhead nav nav-tabs mb-3">
-            <div>
-                <a class="nav-link " href="#">Projects</a>
-            </div>
-              
-            <div>
-                <a class="nav-link" href="#">Team</a>
-            </div>
+          
+          {% block profile %}
             
-            <div>
-                <a class="nav-link" href="#">My Vacations</a>
-            </div>
-            
-          </div>
-
-          <!-- Project cards -->
-          {% comment %} <div class="project-card">
-            <h6>📱 Medical App (iOS native)</h6>
-            <p class="mb-1">
-              <small>Created: Sep 12, 2020</small>
-            </p>
-            <p class="mb-0">
-              <strong>Status:</strong> Medium | <strong>Tasks:</strong> 34 | <strong>Active:</strong> 13
-            </p>
-          </div> {% endcomment %}
-
-          {% comment %} <div class="project-card">
-            <h6>🍔 Food Delivery Service</h6>
-            <p class="mb-1">
-              <small>Created: Sep 10, 2020</small>
-            </p>
-            <p class="mb-0">
-              <strong>Status:</strong> Medium | <strong>Tasks:</strong> 50 | <strong>Active:</strong> 24
-            </p>
-          </div> {% endcomment %}
-
-          {% comment %} <div class="project-card">
-            <h6>📁 Internal Project</h6>
-            <p class="mb-1">
-              <small>Created: May 20, 2020</small>
-            </p>
-            <p class="mb-0">
-              <strong>Status:</strong> Low | <strong>Tasks:</strong> 23 | <strong>Active:</strong> 20
-            </p>
-          </div> {% endcomment %}
+            {% endblock profile %}
         </div>
+        
       </div>
     </div>
   </div>
