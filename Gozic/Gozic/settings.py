@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+from drf_yasg import openapi
 from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -48,17 +49,19 @@ INSTALLED_APPS = [
     'InfoPortal',
     'Calendar',
     'DashBoard',
+    'Messenger',
     'Projects',
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist', 
     'drf_yasg', 
-    'channels',
-    'Messenger',
     'ckeditor',
     'ckeditor_uploader', 
     'Support',
     'widget_tweaks',
+    'ckeditor_uploader',
+
 ]
+
 
 AUTH_USER_MODEL = 'Account.Account'
 
@@ -169,6 +172,3 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
 }
-
-# Tùy chọn thêm: cho phép upload ảnh bất kỳ định dạng gì
-CKEDITOR_ALLOW_NONIMAGE_FILES = True

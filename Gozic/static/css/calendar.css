@@ -3,11 +3,13 @@
     background-color: #fff;
     border-radius: 20px;
 }
-.title{
+
+.title {
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
 }
+
 .calendar-header {
     display: flex;
     justify-content: center;
@@ -31,18 +33,22 @@
     display: grid;
     grid-template-columns: repeat(5, 1fr);
 }
+
 .day-header {
-  font-weight: bold;
-  text-align: center;
+    font-weight: bold;
+    text-align: center;
 }
+
 .day-name {
     font-weight: bold;
     color: #fff;
     padding: 5px 0;
 }
-.dayinweek{
+
+.dayinweek {
     text-align: center;
 }
+
 .calendar-day {
     position: relative;
     background: #fff;
@@ -107,6 +113,7 @@
     font-size: 0.75rem;
     color: #444;
 }
+
 .modal-content {
     border-radius: 20px;
 }
@@ -135,7 +142,7 @@
 }
 
 /* Modal box */
-.modal-content {
+.modal-content1 {
     background-color: #fff;
     margin: 10% auto;
     padding: 20px;

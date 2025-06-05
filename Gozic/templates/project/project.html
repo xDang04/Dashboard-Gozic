@@ -6,13 +6,11 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
   <h4>Projects</h4>
   <div>
-    <a href="?view=list" class="btn btn-outline-secondary me-2">List View</a>
-    <a href="?view=board" class="btn btn-outline-secondary">Board View</a>
     <a href="{% url 'add_project' %}" class="btn btn-primary ms-3">+ Add Project</a>
   </div>
 </div>
 
-{% comment %} {% if view == "board" %}
+ {% if view == "board" %}
 <!-- BOARD VIEW -->
 <div class="row">
   {% for status in statuses %}
@@ -37,7 +35,7 @@
   {% endfor %}
 </div>
 
-{% else %} {% endcomment %}
+{% else %} 
 <!-- LIST VIEW -->
 <table class="table table-hover bg-white rounded shadow-sm">
   <thead class="table-light">
@@ -75,5 +73,5 @@
     {% endfor %}
   </tbody>
 </table>
-{% comment %} {% endif %} {% endcomment %}
+{% endif %} 
 {% endblock %}

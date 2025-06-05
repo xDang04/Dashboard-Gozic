@@ -1,12 +1,14 @@
 body {
     background-color: #f5f8fd;
 }
-.linkhead{
+
+.linkhead {
     width: 450px;
     justify-content: space-between;
-    border: 1px solid red; 
+    border: 1px solid red;
     border-radius: 50px;
 }
+
 .sidebar {
     width: 240px;
     background-color: white;

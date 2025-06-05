@@ -35,9 +35,9 @@
         <div class="p-4">
           <h4 class="text-primary fw-bold">Dashboard</h4>
         </div>
-        <a href="#" class="">🏠 Dashboard</a>
-        <a href="#">📁 Projects</a>
-        <a href="#">📅 Calendar</a>
+        <a href="{% url 'dashboard' %}" class="">🏠 Dashboard</a>
+        <a href="{% url 'projects_view' %}">📁 Projects</a>
+        <a href="{% url 'calendar:calendar' %}">📅 Calendar</a>
         <a href="#">🌴 Vacations</a>
         <a href="#">👥 Employees</a>
         <a href="#">💬 Messenger</a>
@@ -46,6 +46,7 @@
         <div class="mt-auto p-3">
           <button type="button" id="openSupportModalBtn" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg flex items-center gap-2 transition-colors w-50">Support</button>
           <a href="#" class="btn btn-outline-primary w-100">Logout</a>
+          <a href="{% url 'login' %}" class="btn btn-outline-primary w-100">Logout</a>
         </div>
       </div>
 
@@ -59,7 +60,11 @@
           <div class="d-flex align-items-center gap-3">
             <img style="width: 20px; height: 20px;" src="{% static 'icons/icons8-notification-50.png' %}" alt="tb">
             <div>
-              <img src="https://via.placeholder.com/40" class="rounded-circle" alt="User" width="40" height="40" />
+              {% if request.user.is_authenticated %}
+                <p>Xin chào, {{ request.user.get_full_name|default:request.user.username }}!</p>
+              {% else %}
+                <p>Bạn chưa đăng nhập.</p>
+              {% endif %}
             </div>
           </div>
         </div>

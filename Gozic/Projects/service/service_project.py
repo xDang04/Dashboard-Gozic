@@ -1,5 +1,5 @@
-from ..models import Projects , Task
-from ..serializers import * 
+from Projects.models import Projects , Task
+from Projects.serializers import * 
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
@@ -34,7 +34,7 @@ def put_project(pk,data):
     
 def delete_project(pk):
     try:
-        project = Projects.objects.all()
+        project = Projects.objects.get(pk)
         project.delete()
         return Response({"messange":"Xóa dự án thành công"} , status= status.HTTP_201_CREATED)
     except:
