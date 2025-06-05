@@ -4,18 +4,20 @@ from django.template.loader import render_to_string
 from asgiref.sync import async_to_sync
 import json
 from .models import *
+from Account.models import Account
 
 class ChatRoomConsumer(WebsocketConsumer):
     def connect(self):
         self.user = self.scope['user']
+        id = self.user.id
         self.chatroom_name = self.scope['url_route']['kwargs']['chatroom_name'] 
+        self.user = Account.objects.get(pk=id)
         self.chatroom = get_object_or_404(ChatGroup, name=self.chatroom_name)
         self.chatroom_name_fix = self.chatroom_name.replace(' ','_')
         async_to_sync(self.channel_layer.group_add)(
             self.chatroom_name_fix, self.channel_name
         )
         
-        # add and update online users
         if self.user not in self.chatroom.users_online.all():
             self.chatroom.users_online.add(self.user)
             self.update_online_count()
@@ -125,7 +127,10 @@ class OnlineStatusConsumer(WebsocketConsumer):
         online_users = self.group.users_online.exclude(id=self.user.id)
         public_chat_users = ChatGroup.objects.get(name='public-chat').users_online.exclude(id=self.user.id)
         
-        my_chats = self.user.chat_groups.all()
+        # Explicitly get the user object to ensure it's resolved
+        user = Account.objects.get(id=self.user.id)
+        
+        my_chats = user.chat_groups.all()
         private_chats_with_users = [chat for chat in my_chats.filter(is_private=True) if chat.users_online.exclude(id=self.user.id)]
         group_chats_with_users = [chat for chat in my_chats.filter(groupchat_name__isnull=False) if chat.users_online.exclude(id=self.user.id)]
         

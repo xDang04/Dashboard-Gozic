@@ -12,7 +12,12 @@
                     <h3 class="font-medium text-gray-900">{{group.name}}</h3>
                     <span class="text-xs text-gray-500">{{group.lastest_time}}</span>
                 </div>
-                <p class="text-sm text-gray-500 truncate"><strong>{{ group.lastest_sender }}</strong>: {{group.lastest_message | truncatechars:30}}</p>
+                {% if group.lastest_message %}
+                    <p class="text-sm text-gray-500 truncate"><strong>{{ group.lastest_sender }}</strong>: {{group.lastest_message | truncatechars:15}}</p>
+                    {% else %}
+                    <p class="text-sm text-gray-500 truncate"><strong>{{ group.lastest_sender }}</strong>: Đã gửi file</p>
+                   
+                {% endif %}
             </div>
         </div>
 

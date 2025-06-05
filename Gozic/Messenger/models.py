@@ -1,5 +1,6 @@
 from django.db import models
 from Account.models import Account
+from PIL import Image
 # Create your models here.
 
 class ChatGroup(models.Model):
@@ -20,9 +21,19 @@ class GroupMessage(models.Model):
     author = models.ForeignKey(Account,on_delete=models.CASCADE) 
     body = models.CharField(max_length=500)
     created = models.DateTimeField(auto_now_add=True)
+    file = models.FileField(upload_to='files/', blank=True, null=True)
 
     def __str__(self):
         return f"{self.author.username} in {self.group.name}: {self.body[:20]}"
     
     class Meta:
         ordering = ['created']
+    
+    @property    
+    def is_image(self):
+        try:
+            image = Image.open(self.file) 
+            image.verify()
+            return True 
+        except:
+            return False

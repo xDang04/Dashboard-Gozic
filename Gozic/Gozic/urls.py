@@ -53,6 +53,7 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('infoportal/', include('InfoPortal.urls')),
     path("ckeditor/", include("ckeditor_custom.ckeditor_urls")),
+    path("support/",include("Support.urls"))
 ] 
 
 if settings.DEBUG:

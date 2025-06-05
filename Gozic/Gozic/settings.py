@@ -56,6 +56,8 @@ INSTALLED_APPS = [
     'Messenger',
     'ckeditor',
     'ckeditor_uploader', 
+    'Support',
+    'widget_tweaks',
 ]
 
 AUTH_USER_MODEL = 'Account.Account'
@@ -84,6 +86,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'core.context_processor.context_processor.get_field',
             ],
         },
     },
