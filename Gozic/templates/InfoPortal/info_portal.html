@@ -1,0 +1,135 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-6 py-8">
+        <div class="flex justify-between items-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-900">Info Portal</h1>
+            <button onclick="openModal('modalFolder','modal-backdrop-folder','modal-panel-folder')" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg flex items-center gap-2 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                Add Folder
+            </button>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-2xl p-8 mb-8 shadow-sm border">
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1">
+                            <h2 class="text-2xl font-bold text-gray-900 mb-4">Your project data warehouse</h2>
+                            <p class="text-gray-600 text-lg leading-relaxed">
+                                Add project data, create thematic pages, edit data,<br>
+                                share information with team members
+                            </p>
+                        </div>
+                        <div class="ml-8 flex-shrink-0">
+                            <div class="relative w-64 h-48">
+                                <div class="absolute top-4 left-8 w-16 h-12 bg-gray-200 rounded transform rotate-12 opacity-60"></div>
+                                <div class="absolute top-2 right-4 w-14 h-10 bg-gray-300 rounded transform -rotate-6 opacity-40"></div>
+                                
+                                <div class="absolute bottom-8 left-4 w-32 h-24 bg-yellow-400 rounded-lg shadow-lg">
+                                    <div class="absolute -top-2 left-4 w-8 h-4 bg-yellow-400 rounded-t-lg"></div>
+                                    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                                        <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                
+                                <div class="absolute top-8 right-8 w-20 h-16 bg-blue-200 rounded-lg border-4 border-white shadow-md">
+                                    <div class="w-full h-8 bg-blue-300 rounded-t"></div>
+                                    <div class="flex justify-center items-center h-8">
+                                        <div class="w-3 h-3 bg-white rounded-full"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="absolute bottom-0 right-0 flex flex-col items-center">
+                                    <div class="w-12 h-12 bg-blue-600 rounded-full mb-2 flex items-center justify-center">
+                                        <div class="w-6 h-6 bg-white rounded-full"></div>
+                                    </div>
+                                    <div class="w-8 h-12 bg-blue-500 rounded-t-full"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    {% for folder in allFolder %}
+                    <a href="{% url "insidefolder" folder.id%}" class="infpItem bg-white rounded-xl p-6 shadow-sm border cursor-pointer text-left">
+                        <div class="flex gap-4 mb-4">
+                            <div class="w-12 h-12 {{folder.color.bg}} rounded-lg flex items-center justify-center">
+                                <svg class="w-6 h-6 {{folder.color.text}}" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M10 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2h-8l-2-2z"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">{{folder.name}}</h3>
+                        <p class="text-gray-500">{{folder.page_count}} pages</p>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-xl p-6 shadow-sm border">
+                    <h3 class="text-lg font-medium text-gray-500 mb-4">Current Projects</h3>
+                    
+                    <div class="flex items-end gap-4 mb-6">
+                        <div class="text-6xl font-bold text-gray-900">10</div>
+                        <div class="pb-2">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="text-green-500 font-medium">Growth +3</span>
+                                <svg class="w-8 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 40 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2 20 Q8 16 14 18 T26 14 T38 10"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <p class="text-gray-500 text-sm">Ongoing projects last month - 7</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include "InfoPortal/modal/addFolder.html" %}
+
+{% endblock content %}
+
+
+{% block script %}
+<script>
+    function openModal(idModal, backdropId, panelId) {
+        const modal = document.getElementById(`${idModal}`);
+        const backdrop = document.getElementById(`${backdropId}`);
+        const panel = document.getElementById(`${panelId}`);
+        console.log(modal,backdrop,panel)
+      modal.classList.remove("hidden");
+      setTimeout(() => {
+        backdrop.classList.remove("opacity-0");
+        backdrop.classList.add("opacity-100");
+
+        panel.classList.remove("opacity-0", "scale-95");
+        panel.classList.add("opacity-100", "scale-100");
+      }, 10);
+    }
+
+    function closeModal(idModal,backdropId, panelId) {
+      const modal = document.getElementById(`${idModal}`);
+      const backdrop = document.getElementById(`${backdropId}`);
+      const panel = document.getElementById(`${panelId}`);
+      backdrop.classList.remove("opacity-100");
+      backdrop.classList.add("opacity-0");
+
+      panel.classList.remove("opacity-100", "scale-100");
+      panel.classList.add("opacity-0", "scale-95");
+
+      setTimeout(() => {
+        modal.classList.add("hidden");
+      }, 300);
+    }
+  </script>
+{% endblock script %}

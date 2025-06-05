@@ -1,0 +1,168 @@
+{% extends "layout.html" %}
+{% block content %}
+<div id="modal-body" class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-6 py-8">
+        <a href="{% url "infoPortal" %}" class="flex items-center text-blue-600 mb-4">
+          <i class="fas fa-arrow-left mr-2"></i>
+          <span class="text-sm">Back to Info Portal</span>
+        </a>
+        <div class="flex justify-between items-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-900">{{POFolder.name}}</h1>
+            <button onclick="openModal('modalFolder','modal-backdrop-folder','modal-panel-folder')" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg flex items-center gap-2 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                Add Folder
+            </button>
+        </div>
+
+        <div class="grid grid-cols-12 gap-8">
+            <div class="col-span-3">
+                <div class="bg-white rounded-2xl p-8 mb-8 shadow-sm border">
+                    <div class="">
+                        <div class="w-100">
+                            <div class="flex items-center justify-between mb-4">
+                                <h2 class="text-sm font-medium text-gray-700">Pages</h2>
+                                <button onclick="openModal('modalPage','modal-backdrop-page','modal-panel-page')" class="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm">
+                                    <i class="fas fa-plus text-xs"></i>
+                                </button>
+                            </div>
+
+                            <!-- Navigation Items -->
+                            <nav class="space-y-2">
+                                {% for page in POFolder.pages.all %}
+                                <button id="page" onclick="contentPage(this)" data-id="{{page.id}}" data-name="{{page.name}}" class="page-item block border-l-4 pl-3 py-2 rounded-r text-left">
+                                    <div class="font-medium text-gray-900">{{page.name}}</div>
+                                    <div class="text-xs text-gray-500">{{page.updated_at}}</div>
+                                </button>
+                                {% endfor %}
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+
+                
+            </div>
+
+            <div class="col-span-9">
+                {% for page in POFolder.pages.all %}
+                <div class="page-div {{ page.name|cut:" " }}{{ page.id }} hidden">
+                    <div class="px-6 py-4 flex items-center justify-between flex-shrink-0">
+                        <h1 class="text-2xl font-bold text-gray-900">{{page.name}}</h1>
+                        <div class="flex items-center space-x-4">
+                            <button
+                              class="p-2 hover:bg-gray-100 rounded"
+                              hx-get="{% url 'update_page' page.id %}"
+                              hx-target="#modal-body"
+                              hx-swap="innerHTML"  
+                            >
+                                <i class="fas fa-edit text-gray-600"></i>
+                            </button>
+                            <button onclick="openModal('modalShare','modal-backdrop-Share','modal-panel-Share')" class="p-2 hover:bg-gray-100 rounded">
+                                <i class="fas fa-share text-gray-600"></i>
+                                <span class="ml-2 text-gray-600">Share</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 shadow-sm border">
+                        <div class="flex-1 p-6 overflow-y-auto" style="max-height:50rem">
+                            
+                            <div>{{ page.content|safe }}</div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% include "InfoPortal/modal/addPage.html" with form=formPage %}
+
+{% include "InfoPortal/modal/share.html" %}
+
+{% include "InfoPortal/modal/addFolder.html" with form=formFolder %}
+</div>
+{% endblock content %}
+
+{% block script %}
+<script>
+    function openModal(idModal, backdropId, panelId) {
+        const modal = document.getElementById(idModal);
+        const backdrop = document.getElementById(backdropId);
+        const panel = document.getElementById(panelId);
+
+        if (!modal || !backdrop || !panel) {
+            console.error("Modal elements not found for:", idModal, backdropId, panelId);
+            return;
+        }
+
+        modal.classList.remove("hidden");
+        setTimeout(() => {
+            backdrop.classList.remove("opacity-0");
+            backdrop.classList.add("opacity-100");
+
+            panel.classList.remove("opacity-0", "scale-95");
+            panel.classList.add("opacity-100", "scale-100");
+
+            if (idModal === 'modalPage' || idModal === 'modalPageUpdate') {
+                 console.log("Attempting to initialize CKEditor for modal:", idModal);
+                 const ckeditorTextarea = modal.querySelector('textarea#id_content');
+                 if (ckeditorTextarea && !CKEDITOR.instances[ckeditorTextarea.id]) {
+                     console.log("CKEditor textarea found, replacing...");
+                     CKEDITOR.replace(ckeditorTextarea.id);
+                     console.log("CKEditor replaced on", ckeditorTextarea.id);
+                 } else if (CKEDITOR.instances[ckeditorTextarea.id]) {
+                      console.log("CKEditor instance already exists for", ckeditorTextarea.id);
+                 } else {
+                     console.warn("CKEditor textarea #id_content not found in modal", idModal);
+                 }
+            }
+
+        }, 10);
+    }
+
+    function closeModal(idModal, backdropId, panelId) {
+      const modal = document.getElementById(idModal);
+      const backdrop = document.getElementById(backdropId);
+      const panel = document.getElementById(panelId);
+
+      if (!modal || !backdrop || !panel) {
+          console.error("Modal elements not found for:", idModal, backdropId, panelId);
+          return;
+      }
+
+      backdrop.classList.remove("opacity-100");
+      backdrop.classList.add("opacity-0");
+
+      panel.classList.remove("opacity-100", "scale-100");
+      panel.classList.add("opacity-0", "scale-95");
+      setTimeout(() => {
+          modal.classList.add("hidden");
+      }, 300);
+    }
+
+    function contentPage(page){
+      const id = page.getAttribute('data-id');
+      const name = page.getAttribute('data-name');
+      const pageClass = name.replace(/\s+/g, '') + id;
+      console.log(pageClass)
+      const contentDiv = document.querySelector("." + pageClass);
+      document.querySelectorAll('.page-div').forEach(div => {
+        div.classList.add("hidden");
+      });
+      if (contentDiv) {
+        contentDiv.classList.remove("hidden");
+      }
+      document.querySelectorAll('.page-item').forEach(btn => {
+        btn.classList.remove('bg-blue-50', 'border-blue-500');
+      });
+      page.classList.add("bg-blue-50","border-blue-500");
+    }
+
+
+
+</script>
+{% endblock script %}

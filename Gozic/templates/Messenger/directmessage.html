@@ -1,0 +1,26 @@
+{% for group in allGroup %}
+    {% if group.name and not group.is_group %}
+    <a href="{% url 'chatroom' group.name %}" class=" hover:bg-gray-50 ">
+
+    <div class="space-y-1">
+        <div class="flex items-center p-3 hover:bg-gray-50 rounded-lg">
+            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face" class="w-10 h-10 rounded-full mr-3" alt="Garrett">
+            <div class="flex-1">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-medium text-gray-900">
+                        {% for member in group.members.all %}
+                                {% if member != user %}
+                                    {{ member.username }}
+                                {% endif %}
+                            {% endfor %}</h3>
+                    <span class="text-xs text-gray-500">{{group.lastest_time}}</span>
+                </div>
+                <p class="text-sm text-gray-500 truncate"><strong>{{ group.lastest_sender }}</strong>: {{group.lastest_message | truncatechars:30}}</p>
+            </div>
+        </div>
+
+        
+    </div>
+</a>
+    {% endif %}
+{% endfor %}

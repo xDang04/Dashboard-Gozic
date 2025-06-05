@@ -23,6 +23,8 @@ from rest_framework_simplejwt.views import *
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 
@@ -50,8 +52,4 @@ urlpatterns = [
     path('calendar/', include('Calendar.urls')),
     path('profile/', include('Profile.urls')),
     
-    path('messenger/', include('Messenger.urls')),
-    path('accounts/', include('allauth.urls')),
 ]
-if settings.DEBUG:
-    urlpatterns += static(settings.STATIC_URL, document_root=os.path.join(settings.BASE_DIR, 'static'))

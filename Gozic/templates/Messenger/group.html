@@ -1,0 +1,23 @@
+{% for group in allGroup %}
+    {% if group.name and group.is_group %}
+    <a href="{% url 'chatroom' group.name %}" class=" hover:bg-gray-50 ">
+
+    <div class="space-y-1">
+        <div class="flex items-center p-3 hover:bg-gray-50 rounded-lg">
+            <div class="w-10 h-10 bg-teal-500 rounded-full flex items-center justify-center mr-3">
+                <i class="fas fa-user-md text-white text-sm"></i>
+            </div>
+            <div class="flex-1">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-medium text-gray-900">{{group.name}}</h3>
+                    <span class="text-xs text-gray-500">{{group.lastest_time}}</span>
+                </div>
+                <p class="text-sm text-gray-500 truncate"><strong>{{ group.lastest_sender }}</strong>: {{group.lastest_message | truncatechars:30}}</p>
+            </div>
+        </div>
+
+        
+    </div>
+</a>
+    {% endif %}
+{% endfor %}

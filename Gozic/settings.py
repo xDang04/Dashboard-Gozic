@@ -46,14 +46,13 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'Account',
+    'InfoPortal',
     'Calendar',
     'DashBoard',
     'Projects',
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist', 
     'drf_yasg', 
-    'channels',
-    'Messenger',
 ]
 
 
@@ -158,21 +157,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
-
+CKEDITOR_UPLOAD_PATH = "uploads/"
 #rest_framework
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
-}
-SWAGGER_SETTINGS = {
-    'SECURITY_DEFINITIONS': {
-        'Bearer': {
-            'type': 'apiKey',
-            'name': 'Authorization',
-            'in': 'header',
-            'description': 'Nhập token theo định dạng: **Bearer &lt;token&gt;**',
-        }
-    },
-    'USE_SESSION_AUTH': False,
 }
