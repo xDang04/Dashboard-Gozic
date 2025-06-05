@@ -26,5 +26,39 @@ class VacationViewSet(APIView):
         vacation = get_all_vacation(username)
         serializer = VacatioSerializers(vacation , many = True)
         return Response(serializer.data , status= status.HTTP_200_OK)
-
-   
+    
+    @swagger_auto_schema(
+        request_body=VacatioSerializers,
+        operation_summary="Thêm kì nghỉ",
+        operation_id="Thêm kì nghỉ",
+        tags=["Vacation"]
+    )
+    def post(self , request):
+        return post_vacation(request.data , request.user)
+    
+class VacationDetailViewSet(APIView):
+    permission_classes = [IsAuthenticated]         
+    authentication_classes = [JWTAuthentication] 
+    @swagger_auto_schema(
+        operation_summary="Lấy chi tiết ngày nghỉ theo ID",
+        tags=["Vacation"]
+    )
+    def get(self,request, pk):
+        return get_vacation_by_id(pk)
+    
+    @swagger_auto_schema(
+        request_body=VacatioSerializers,
+        operation_summary="cập nhật kì nghỉ",
+        operation_id="cập nhật kì nghỉ",
+        tags=["Vacation"]
+    )
+    def put(self,request, pk):
+        return put_vacation(pk , request.data , request.user) 
+    
+    @swagger_auto_schema(
+        operation_summary="xóa kì nghỉ",
+        operation_id="xóa kì nghỉ",
+        tags=["Vacation"]
+    )
+    def delete(self , request , pk):
+        return delete_vacation(pk )
