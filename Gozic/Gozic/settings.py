@@ -56,7 +56,10 @@ INSTALLED_APPS = [
     'drf_yasg', 
     'ckeditor',
     'Vacations',
-    'ckeditor_uploader',
+    'ckeditor_uploader', 
+    'Support',
+    'widget_tweaks',
+
 ]
 
 
@@ -86,6 +89,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'core.context_processor.context_processor.get_field',
             ],
         },
     },

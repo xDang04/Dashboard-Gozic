@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 
 {% block content %}
+{{ block.super }}
 <div class="bg-gray-50 h-screen flex">
     <!-- Left Sidebar -->
     <div class="w-80 bg-white border-r border-gray-200 flex flex-col">
@@ -99,38 +100,12 @@
 
         <!-- Message Input - Cố định ở cuối -->
         <div class="bg-white border-t border-gray-200 p-4">
-            <div class="flex items-center space-x-3 bg-gray-50 rounded-lg p-3">
-                <form id="chat_message_form"
-                    method="POST"
-                    class="w-full"
-                    hx-ext="ws"
-                    ws-send
-                    ws-connect="/ws/chatroom/{{ chatroom_name }}"
-                    _="on htmx:wsAfterSend reset() me"
-                >
-                {% csrf_token %}
-                <div class="flex items-center space-x-3 bg-gray-50 rounded-lg p-3">
-                    <button type="button" class="text-gray-400 hover:text-gray-600">
-                        <i class="fas fa-paperclip"></i>
-                    </button>
-                    <button type="button" class="text-gray-400 hover:text-gray-600">
-                        <i class="fas fa-link"></i>
-                    </button>
-                    <button type="button" class="text-gray-400 hover:text-gray-600">
-                        <i class="fas fa-at"></i>
-                    </button>
-
-                    {{ form.body }}
-
-                    <button type="button" class="text-gray-400 hover:text-gray-600">
-                        <i class="fas fa-smile"></i>
-                    </button>
-
-                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-lg">
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
-                </div>
-                </form>
+            <div hx-ext="ws"
+            
+            ws-connect="/ws/chatroom/{{ chatroom_name }}"
+            _="on htmx:wsAfterSend reset() me" class="flex items-center space-x-3 bg-gray-50 rounded-lg p-3">
+                {% include "Messenger/partials/message_input_area.html" %}
+                
             </div>
         </div>
     </div>
@@ -138,49 +113,146 @@
 {% endblock content %}
 
 {% block script %}
+{{ block.super }}
 <script>
-    window.onload = function () {
-    console.log("[DEBUG] onload running...");
-    const form = document.getElementById('chat_message_form');
-    form.removeAttribute('ws-connect');
-    console.log("[DEBUG] Removed ws-connect from form:", form);
-};
-function connectToGroup(username, groupName, groupId) {
-    const form = document.getElementById('chat_message_form');
-    
-    fetch(`chat/${username}/${groupId}`, {
-        method: 'GET',
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-        }
-    })
-    .then(response => {
-        if (response.ok) {
-            
-            if (form.hasAttribute('ws-connect')) {
-                form.removeAttribute('ws-connect');
-            }
-            const encodedGroupName = encodeURIComponent(groupName); 
-            form.setAttribute('ws-connect', `/ws/chatroom/${encodedGroupName}`);
-            htmx.process(form);
-            
-        } else {
-            console.error('Gọi URL thất bại:');
-        }
-    })
-    .catch(error => {
-        console.error('Lỗi khi gọi URL:', error);
-    });
-}
-const toggleBtn = document.getElementById('toggleSearch');
-  const searchForm = document.getElementById('searchForm');
+    let selectedFile = null;
 
-  toggleBtn.addEventListener('click', () => {
-    searchForm.classList.toggle('hidden');
-    if (!searchForm.classList.contains('hidden')) {
-      searchForm.querySelector('input').focus();
+    // Function to attach event listeners for the message input area
+    function attachMessageInputListeners() {
+      const fileInputButton = document.getElementById('file-input-button');
+      const hiddenFileInput = document.getElementById('hidden-file-input');
+      const linkInputButton = document.getElementById('link-input-button');
+      const chatForm = document.getElementById('chat_message_form');
+
+      // Only attach if the elements exist (they might not on initial load if the chatroom is empty, or after a swap)
+      if (fileInputButton && hiddenFileInput && linkInputButton && chatForm) {
+        console.log("[DEBUG] Attaching message input listeners...");
+        // Trigger hidden file input click
+        fileInputButton.removeEventListener('click', handleFileInputButtonClick); // Prevent double-attaching
+        fileInputButton.addEventListener('click', handleFileInputButtonClick);
+
+        // Handle file selection
+        hiddenFileInput.removeEventListener('change', handleHiddenFileInputChange); // Prevent double-attaching
+        hiddenFileInput.addEventListener('change', handleHiddenFileInputChange);
+
+        // Handle link input
+        linkInputButton.removeEventListener('click', handleLinkInputButtonClick); // Prevent double-attaching
+        linkInputButton.addEventListener('click', handleLinkInputButtonClick);
+      } else {
+        console.log("[DEBUG] Message input elements not found, skipping listener attachment.");
+      }
     }
-  });
+
+    // Event handler functions
+    function handleFileInputButtonClick() {
+      console.log("click file button");
+      const hiddenFileInput = document.getElementById('hidden-file-input');
+      if (hiddenFileInput) {
+        hiddenFileInput.click();
+      }
+    }
+
+    function handleHiddenFileInputChange() {
+      const hiddenFileInput = document.getElementById('hidden-file-input');
+      const chatForm = document.getElementById('chat_message_form');
+      if (hiddenFileInput && hiddenFileInput.files.length > 0 && chatForm) {
+        const file = hiddenFileInput.files[0];
+        selectedFile = file;
+        // For now, just send the filename as a message
+        const fileMessage = `[FILE] ${file.name}`;
+
+        // Find the body input and set its value
+        const bodyInput = chatForm.querySelector('input[name="body"]');
+        if (bodyInput) {
+          bodyInput.value = fileMessage;
+          // Optionally submit the form automatically - commented out for now
+          // chatForm.submit();
+        }
+      }
+    }
+
+    function handleLinkInputButtonClick() {
+      const link = prompt("Enter the link URL:");
+      const chatForm = document.getElementById('chat_message_form');
+      if (link && chatForm) {
+        // Send the link as a message
+        const linkMessage = `${link}`;
+
+         // Find the body input and set its value
+         const bodyInput = chatForm.querySelector('input[name="body"]');
+         if (bodyInput) {
+           bodyInput.value = linkMessage;
+           // Optionally submit the form automatically - commented out for now
+           // chatForm.submit();
+         }
+      }
+    }
+
+
+    window.onload = function () {
+      console.log("[DEBUG] window.onload running...");
+      const form = document.getElementById('chat_message_form');
+      if (form) {
+        form.removeAttribute('ws-connect');
+        console.log("[DEBUG] Removed ws-connect from form:", form);
+      }
+      attachMessageInputListeners();
+    };
+
+    function connectToGroup(username, groupName, groupId) {
+        const form = document.getElementById('chat_message_form');
+
+        fetch(`chat/${username}/${groupId}`, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+
+                if (form && form.hasAttribute('ws-connect')) {
+                    form.removeAttribute('ws-connect');
+                }
+                const encodedGroupName = encodeURIComponent(groupName);
+                if (form) {
+                  form.setAttribute('ws-connect', `/ws/chatroom/${encodedGroupName}`);
+                  htmx.process(form);
+                }
+
+            } else {
+                console.error('Gọi URL thất bại:');
+            }
+        })
+        .catch(error => {
+            console.error('Lỗi khi gọi URL:', error);
+        });
+    }
+
+    const toggleBtn = document.getElementById('toggleSearch');
+    const searchForm = document.getElementById('searchForm');
+
+    if (toggleBtn && searchForm) {
+      toggleBtn.addEventListener('click', () => {
+        searchForm.classList.toggle('hidden');
+        if (!searchForm.classList.contains('hidden')) {
+          searchForm.querySelector('input').focus();
+        }
+      });
+    }
+
+
+    // Listen for htmx:afterSwap on the message input area container
+    const messageInputContainer = document.querySelector('.bg-white.border-t.border-gray-200.p-4');
+    if (messageInputContainer) {
+      messageInputContainer.addEventListener('htmx:afterSwap', function(event) {
+          console.log("[DEBUG] htmx:afterSwap on message input container. Re-attaching listeners.");
+          attachMessageInputListeners(); // Re-attach listeners after the swap
+      });
+    }
+
+    // Remove the original, now-redundant, listener attachment code
+    // ... existing code ...
 </script>
 
 {% endblock script %}
