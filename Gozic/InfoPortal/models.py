@@ -5,7 +5,7 @@ from Account.models import Account
 # Create your models here.
 class Folder(BaseModel):
     name = models.CharField(max_length=100, unique=True)
-    user = models.ManyToManyField(Account,related_name="folders",null=True)
+    user = models.ManyToManyField(Account,related_name="folders")
     def __str__(self):
         return self.name
     

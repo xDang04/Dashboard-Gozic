@@ -55,7 +55,11 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist', 
     'drf_yasg', 
     'ckeditor',
+    'ckeditor_uploader', 
+    'Support',
+    'widget_tweaks',
     'ckeditor_uploader',
+
 ]
 
 
@@ -85,6 +89,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'core.context_processor.context_processor.get_field',
             ],
         },
     },

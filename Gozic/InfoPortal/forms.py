@@ -15,4 +15,5 @@ class PageForm(forms.ModelForm):
         fields = ['name', 'content']
         widgets = {
             'name' : forms.TextInput(attrs={'placeholder': 'Add name page', 'class': 'p-4 text-black', 'maxlength' : '300', 'autofocus': True }),
+            'content': forms.Textarea(attrs={'class':''})
         }

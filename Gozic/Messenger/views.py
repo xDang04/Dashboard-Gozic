@@ -6,6 +6,9 @@ from Account.models import Account
 from django.http import Http404
 import shortuuid
 from django.db.models import OuterRef, Subquery
+from django.http import HttpResponse
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 
 # Create your views here.
 # def messenger(request):
@@ -95,7 +98,9 @@ def search(request, groupId):
     allGroup = allGroup.annotate(
         lastest_message=Subquery(latest_messages.values("body")[:1]),
         lastest_time=Subquery(latest_messages.values("created")[:1]),
-        lastest_sender=Subquery(latest_messages.values("author__username")[:1])
+        lastest_sender=Subquery(latest_messages.values("author__username")[:1]),
+        lastest_file = Subquery(latest_messages.values("file")[:1]),
+    
     )
     form = ChatmessageCreateForm()
     other_user = None
@@ -117,3 +122,40 @@ def search(request, groupId):
         "groupId": crrGroup.id
     }
     return render(request, 'Messenger/messenger.html', context)
+
+
+@login_required
+def chat_file_upload(request, chatroom_name):
+    chat_group = get_object_or_404(ChatGroup, name=chatroom_name)
+    chatroom_name= chatroom_name.replace(' ','_')
+    if request.method == "POST":
+        if request.FILES:
+            file = request.FILES['fileUpload']
+            message = GroupMessage.objects.create(
+                file=file,
+                author=request.user,
+                group=chat_group,
+            )
+        else:
+            body = request.POST.get('body')
+            message = GroupMessage.objects.create(
+                body=body,
+                author=request.user,
+                group=chat_group,
+            )
+        channel_layer = get_channel_layer()
+        event = {
+            'type': 'message_handler',
+            'message_id': message.id,
+        }
+        async_to_sync(channel_layer.group_send)(
+            chatroom_name, event
+        )
+        
+    form = ChatmessageCreateForm()
+    context = {
+        'form': form,
+        'crrGroup': chat_group,
+        'chatroom_name': chat_group.name
+    }
+    return render(request, 'Messenger/partials/message_input_area.html', context)

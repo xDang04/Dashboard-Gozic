@@ -1,0 +1,35 @@
+
+        <form id="chat_message_form"
+            method="POST"
+            class="w-full"
+            hx-post="{% url 'chat-file-upload' crrGroup.name %}"
+            enctype="multipart/form-data"
+            
+        >
+        {% csrf_token %}
+        <div class="flex items-center space-x-3 bg-gray-50 rounded-lg p-3">
+            <button type="button" class="text-gray-400 hover:text-gray-600" id="file-input-button">
+                <i class="fas fa-paperclip"></i>
+            </button>
+            <button type="button" class="text-gray-400 hover:text-gray-600" id="link-input-button">
+                <i class="fas fa-link"></i>
+            </button>
+            <button type="button" class="text-gray-400 hover:text-gray-600">
+                <i class="fas fa-at"></i>
+            </button>
+
+            {{ form.body }}
+
+            <button type="button" class="text-gray-400 hover:text-gray-600">
+                <i class="fas fa-smile"></i>
+            </button>
+
+            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-lg">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+        
+        <!-- Hidden file input -->
+        <input name="fileUpload" type="file" id="hidden-file-input" style="visibility: hidden; position: absolute;">
+
+        </form>

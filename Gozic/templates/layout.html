@@ -25,6 +25,8 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/messenger/bodyMessage.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/infoPortal/infoPortal.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/layout.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/btn.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/infoPortal/fileCustom.css' %}">  
   </head>
   <body>
     <div class="d-flex">
@@ -40,7 +42,10 @@
         <a href="#">👥 Employees</a>
         <a href="#">💬 Messenger</a>
         <a href="#">ℹ️ Info Portal</a>
+        
         <div class="mt-auto p-3">
+          <button type="button" id="openSupportModalBtn" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg flex items-center gap-2 transition-colors w-50">Support</button>
+          <a href="#" class="btn btn-outline-primary w-100">Logout</a>
           <a href="{% url 'login' %}" class="btn btn-outline-primary w-100">Logout</a>
         </div>
       </div>
@@ -68,13 +73,142 @@
         <div class="p-4">
           {% block content %}
             <!-- Your dashboard content goes here -->
+             {% include "global_modal/support.html" %}
           {% endblock content %}
         </div>
       </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
     {% block script %}
+    <script>
+    function openModal(idModal, backdropId, panelId) {
+      const modal = document.getElementById(idModal);
+      const backdrop = document.getElementById(backdropId);
+      const panel = document.getElementById(panelId);
+      console.log(idModal, backdropId, panelId)
+
+      if (!modal || !backdrop || !panel) {
+          console.error("Modal elements not found for:", idModal, backdropId, panelId);
+          return;
+      }
+
+      modal.classList.remove("hidden");
+      setTimeout(() => {
+          backdrop.classList.remove("opacity-0");
+          backdrop.classList.add("opacity-100");
+
+          panel.classList.remove("opacity-0", "scale-95");
+          panel.classList.add("opacity-100", "scale-100");
+
+          if (idModal === 'modalPage' || idModal === 'modalPageUpdate') {
+              console.log("Attempting to initialize CKEditor for modal:", idModal);
+              const ckeditorTextarea = modal.querySelector('textarea#id_content');
+              if (ckeditorTextarea && !CKEDITOR.instances[ckeditorTextarea.id]) {
+                  console.log("CKEditor textarea found, replacing...");
+                  CKEDITOR.replace(ckeditorTextarea.id);
+                  console.log("CKEditor replaced on", ckeditorTextarea.id);
+              } else if (CKEDITOR.instances[ckeditorTextarea.id]) {
+                    console.log("CKEditor instance already exists for", ckeditorTextarea.id);
+              } else {
+                  console.warn("CKEditor textarea #id_content not found in modal", idModal);
+              }
+          }
+
+      }, 10);
+  }
+
+  function closeModal(idModal, backdropId, panelId) {
+    const modal = document.getElementById(idModal);
+    const backdrop = document.getElementById(backdropId);
+    const panel = document.getElementById(panelId);
+
+    if (!modal || !backdrop || !panel) {
+        console.error("Modal elements not found for:", idModal, backdropId, panelId);
+        return;
+    }
+
+    backdrop.classList.remove("opacity-100");
+    backdrop.classList.add("opacity-0");
+
+    panel.classList.remove("opacity-100", "scale-100");
+    panel.classList.add("opacity-0", "scale-95");
+    setTimeout(() => {
+        modal.classList.add("hidden");
+    }, 300);
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const supportButton = document.getElementById('openSupportModalBtn');
+    if (supportButton) {
+        supportButton.addEventListener('click', function() {
+            console.log("Support button clicked. Opening modal...");
+            openModal('modalHelp', 'modal-backdrop-help', 'modal-panel-help');
+        });
+    } else {
+        console.warn("Support button #openSupportModalBtn not found.");
+    }
+
+    const supportBackdrop = document.getElementById('modal-backdrop-help');
+    if (supportBackdrop) {
+        supportBackdrop.addEventListener('click', () => {
+            console.log("Support backdrop clicked. Closing modal...");
+            closeModal('modalHelp','modal-backdrop-help','modal-panel-help');
+        });
+    } else {
+         console.warn("Support backdrop #modal-backdrop-help not found.");
+    }
+
+    const formSupport = document.getElementById("formSupport");
+    if (formSupport) {
+        formSupport.addEventListener("submit", function (e){
+            e.preventDefault();
+
+            const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+            const formData = new FormData(formSupport);
+
+            fetch(formSupport.action,{
+              method:"POST",
+              headers:{
+                'X-CSRFToken': csrfToken,
+              },
+              body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const contentType = response.headers.get("content-type");
+                if (contentType && contentType.indexOf("application/json") !== -1) {
+                    return response.json();
+                } else {
+                    console.log("Non-JSON response, status:", response.status);
+                    return response;
+                }
+            })
+            .then(data=>{
+                 if (data && data.success) {
+                    alert("Đã gửi yêu cầu hỗ trợ.");
+                    closeModal('modalHelp','modal-backdrop-help','modal-panel-help');
+                 } else if (data && data.errors) {
+                     console.log("Support form validation errors:", data.errors);
+                 } else {
+                     console.warn("Unexpected JSON response:", data);
+                     alert("Có lỗi xảy ra khi gửi yêu cầu. (Phản hồi không như mong đợi)");
+                 }
+            })
+            .catch(error=>{
+              console.error("Fetch error:", error);
+              alert("Submit error: " + error.message);
+            })
+        });
+    } else {
+         console.warn("Support form #formSupport not found on page.");
+    }
+  });
+    </script>
     {% endblock script %}
   </body>
 </html>
