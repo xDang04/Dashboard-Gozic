@@ -1,0 +1,173 @@
+{% extends 'layout.html' %}
+{% block title %}Vacations{% endblock %}
+{% load static %}
+
+{% block content %}
+<h2 class="text-xl font-bold mb-4">Vacations</h2>
+<style>
+    /* General styles */
+body {
+    background-color: #f7f8fa;
+    font-family: 'Inter', sans-serif;
+    color: #333;
+}
+
+h2 {
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+/* Tabs */
+.btn-outline-primary,
+.btn-outline-secondary {
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-size: 0.9rem;
+}
+
+.btn-outline-primary {
+    color: #4f46e5;
+    border-color: #4f46e5;
+}
+
+.btn-outline-primary:hover {
+    background-color: #4f46e5;
+    color: white;
+}
+
+.btn-outline-secondary {
+    color: #9ca3af;
+    border-color: #9ca3af;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #9ca3af;
+    color: white;
+}
+
+/* Add Request Button */
+.btn-primary {
+    background-color: #4f46e5;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 20px;
+    font-weight: 600;
+}
+
+.btn-primary:hover {
+    background-color: #4338ca;
+}
+
+/* Employee Vacation Cards */
+.bg-white {
+    background-color: white;
+    border-radius: 16px;
+    padding: 16px;
+}
+
+.shadow-sm {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.rounded {
+    border-radius: 16px;
+}
+
+.rounded-circle {
+    border-radius: 50%;
+}
+
+.fw-bold {
+    font-weight: 600;
+}
+
+.fw-semibold {
+    font-weight: 500;
+}
+
+.text-muted {
+    color: #9ca3af;
+}
+
+.text-sm {
+    font-size: 0.875rem;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.justify-content-between {
+    justify-content: space-between;
+}
+
+.align-items-center {
+    align-items: center;
+}
+
+.gap-3 {
+    gap: 1rem;
+}
+
+.gap-5 {
+    gap: 2rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .d-flex.flex-column.gap-3 > div {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .d-flex.gap-5 {
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+}
+.rounded-circle{
+    width : 40px ;
+    height :40 px;
+}
+
+</style>
+<!-- Tabs -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <button class="btn btn-outline-primary me-2">Employees' vacations</button>
+    <button class="btn btn-outline-secondary">Calendar</button>
+  </div>
+  <button class="btn btn-primary">+ Add Request</button>
+</div>
+
+<!-- Employee Vacation Cards -->
+<div class="d-flex flex-column gap-3">
+  {% for record in vacation_records %}
+  <div class="d-flex justify-content-between align-items-center p-3 bg-white shadow-sm rounded">
+    <div class="d-flex align-items-center gap-3">
+        <img src="{% static 'img/avtar.jpg' %}" alt="avatar" class="rounded-circle">
+   
+      <div>
+        <div class="fw-bold">{{ record.account.get_full_name|default:record.account.username }}</div>
+        <div class="text-muted text-sm">{{ record.account.email }}</div>
+      </div>
+    </div>
+    <div class="d-flex gap-5">
+      <div class="text-center">
+        <div class="text-muted">Vacations</div>
+        <div class="fw-semibold">{{ record.total_vacations }}</div>
+      </div>
+      <div class="text-center">
+        <div class="text-muted">Sick Leave</div>
+        <div class="fw-semibold">{{ record.sick_leave }}</div>
+      </div>
+      <div class="text-center">
+        <div class="text-muted">Work remotely</div>
+        <div class="fw-semibold">{{ record.work_remotely }}</div>
+      </div>
+    </div>
+  </div>
+{% empty %}
+  <div class="alert alert-info">No vacation records found.</div>
+{% endfor %}
+</div>
+{% endblock %}
