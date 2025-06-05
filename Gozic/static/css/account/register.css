@@ -1,0 +1,34 @@
+body {
+    background-color: #f5f6fa;
+}
+.container {
+    max-width: 960px;
+    margin-top: 50px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+.left-panel {
+    background-color: #2f80ed;
+    color: #fff;
+    padding: 40px;
+}
+.step {
+    margin: 20px 0;
+    font-weight: 500;
+}
+.step.checked::before {
+    content: "✔ ";
+    color: #00ffb3;
+}
+.form-section {
+    padding: 40px;
+}
+.form-section h4 {
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+.form-label {
+    font-weight: 500;
+        }

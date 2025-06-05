@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist', 
     'drf_yasg', 
     'ckeditor',
+    'Vacations',
     'ckeditor_uploader',
 ]
 
@@ -166,4 +167,15 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+}
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header',
+            'description': 'Nhập token theo định dạng: **Bearer &lt;token&gt;**',
+        }
+    },
+    'USE_SESSION_AUTH': False,
 }

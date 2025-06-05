@@ -10,7 +10,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
-
+ 
 class ProjectViewSet(APIView):
     permission_classes = [IsAuthenticated]         
     authentication_classes = [JWTAuthentication]

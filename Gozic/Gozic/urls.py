@@ -36,7 +36,9 @@ schema_view = get_schema_view(
 )
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/projects/', include('Projects.urls')),
+    path('projects/', include('Projects.urls')),
+    path('vacation/', include('Vacations.urls')),
+    path('' , include('Account.urls')),
 
     path('api/accounts/', include('Account.urls')),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
