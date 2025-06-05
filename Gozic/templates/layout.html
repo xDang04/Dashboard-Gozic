@@ -25,10 +25,10 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/messenger/bodyMessage.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/infoPortal/infoPortal.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/layout.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/project/project.css' %}">
-    
     <link rel="stylesheet" type="text/css" href="{% static 'css/btn.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/infoPortal/fileCustom.css' %}">  
+    <link rel="stylesheet" type="text/css" href="{% static 'css/project/project.css' %}">
+    
   </head>
   <body>
     <div class="d-flex">
@@ -42,7 +42,7 @@
         <a href="{% url 'calendar:calendar' %}">📅 Calendar</a>
         <a href="{% url 'vacations_view' %}">🌴 Vacations</a>
         <a href="#">👥 Employees</a>
-        <a href="#">💬 Messenger</a>
+        <a href="{% url "messenger" %}">💬 Messenger</a>
         <a href="#">ℹ️ Info Portal</a>
         
         <div class="mt-auto p-3">

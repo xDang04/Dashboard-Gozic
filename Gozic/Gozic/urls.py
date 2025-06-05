@@ -52,7 +52,7 @@ urlpatterns = [
     path('profile/', include('Profile.urls')),
     
     path('messenger/', include('Messenger.urls')),
-    path('accounts/', include('allauth.urls')),
+    # path('accounts/', include('allauth.urls')),
     path('infoportal/', include('InfoPortal.urls')),
     path("ckeditor/", include("ckeditor_custom.ckeditor_urls")),
     path("support/",include("Support.urls"))
