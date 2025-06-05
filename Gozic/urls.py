@@ -15,6 +15,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.conf import settings
+from django.conf.urls.static import static
+import os
 from django.urls import path, include
 from rest_framework_simplejwt.views import *
 from rest_framework import permissions
@@ -50,3 +53,5 @@ urlpatterns = [
     path('messenger/', include('Messenger.urls')),
     path('accounts/', include('allauth.urls')),
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=os.path.join(settings.BASE_DIR, 'static'))

@@ -4,10 +4,7 @@
   <div class="title">
     <h3>Calendar</h3>
 
-    <button style="height: 40px;" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addEventModal">
-      <img src="{% static 'icons/white.png' %}" alt="" />
-      add event
-    </button>
+    <button style="height: 40px;" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addEventModal">{% comment %} <img src="{% static 'icons/white.png' %}" alt="" /> {% endcomment %}+ add event</button>
   </div>
   <div class="calendar-container">
     <div class="calendar-grid">
@@ -21,15 +18,9 @@
         <div class="dayinweek">{{ day }}</div>
       {% endfor %}
       {% comment %}Hien thi ngay thang truoc{% endcomment %}
-      {% for day in empty_days %}
-        <div class="calendar-day text-muted bg-light">
-          <div style="opacity: 0.2;" class="day-number">{{ day }}</div>
-        </div>
-      {% endfor %}
-
       {% for item in calendar_data %}
-        <div class="calendar-day">
-          <div class="day-number">{{ item.day }}</div>
+        <div class="calendar-day {% if item.is_other_month %}text-muted bg-light{% endif %}">
+          <div class="day-number" style="{% if item.is_other_month %}opacity: 0.4;{% endif %}">{{ item.day }}</div>
 
           <div class="event-stack">
             {% for event in item.events|slice:':3' %}
@@ -43,11 +34,11 @@
           {% if item.events|length > 3 %}
             <div class="more-events" onclick="openModal({{ item.day }})">+{{ item.events|length|add:'-3' }}</div>
 
-            <!-- Modal (ẩn mặc định) -->
+            <!-- Modal hiển thị toàn bộ sự kiện -->
             <div class="event-modal" id="modal-{{ item.day }}">
-              <div class="modal-content">
+              <div class="modal-content1">
                 <span class="close" onclick="closeModal({{ item.day }})">&times;</span>
-                <h4>Events on {{ item.day }}/{{ month }}/{{ year }}</h4>
+                <h4>Events on {{ item.day }}/{{ item.month }}/{{ item.year }}</h4>
                 <ul>
                   {% for event in item.events %}
                     <li>
@@ -196,24 +187,24 @@
     })
   </script>
   <script>
-  function openModal(day) {
-    const modal = document.getElementById(`modal-${day}`);
-    if (modal) modal.style.display = "block";
-  }
-
-  function closeModal(day) {
-    const modal = document.getElementById(`modal-${day}`);
-    if (modal) modal.style.display = "none";
-  }
-
-  // Optional: Đóng modal khi click ra ngoài
-  window.onclick = function(event) {
-    const modals = document.querySelectorAll(".event-modal");
-    modals.forEach(modal => {
-      if (event.target === modal) {
-        modal.style.display = "none";
-      }
-    });
-  }
-</script>
+    function openModal(day) {
+      const modal = document.getElementById(`modal-${day}`)
+      if (modal) modal.style.display = 'block'
+    }
+    
+    function closeModal(day) {
+      const modal = document.getElementById(`modal-${day}`)
+      if (modal) modal.style.display = 'none'
+    }
+    
+    // Optional: Đóng modal khi click ra ngoài
+    window.onclick = function (event) {
+      const modals = document.querySelectorAll('.event-modal')
+      modals.forEach((modal) => {
+        if (event.target === modal) {
+          modal.style.display = 'none'
+        }
+      })
+    }
+  </script>
 {% endblock %}

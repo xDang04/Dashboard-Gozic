@@ -5,7 +5,7 @@ from django.contrib.auth.models import AbstractUser
 class Account(AbstractUser):
     # Thêm các trường mới
     email = models.EmailField(max_length=255)
-    age = models.IntegerField(max_length = 20)
+    age = models.IntegerField(blank=True, null=True)
     phone = models.CharField(max_length=20, blank=True, null=True)
     birthday = models.DateField(blank=True, null=True)
     position = models.CharField(max_length=100, blank=True, null=True)
