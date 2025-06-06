@@ -1,0 +1,58 @@
+{% extends "profile/layout_profile.html" %}
+
+{% block profile %}
+<div class="container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <ul>
+        <li><i>👤</i> Account</li>
+        <li><i>🔔</i> Notifications</li>
+        <li><i>🏢</i> My Company</li>
+        <li><i>🔗</i> Connected Apps</li>
+        <li><i>💳</i> Payments</li>
+        <li><i>🔒</i> Confidentiality</li>
+        <li><i>🛡️</i> Safety</li>
+      </ul>
+    </aside>
+    <!-- Content -->
+    <main class="content">
+      <div class="header">Settings</div>
+      <div class="notifications-card">
+        <h3>Notifications</h3>
+        <div class="notification-item">
+          <label>
+            <span>Issue Activity</span>
+            <div class="toggle-button">
+              <input type="checkbox" checked>
+              <span></span>
+            </div>
+          </label>
+          <span>Send me email notifications for issue activity</span>
+        </div>
+        <div class="notification-item">
+          <label>
+            <span>Tracking Activity</span>
+            <div class="toggle-button">
+              <input type="checkbox">
+              <span></span>
+            </div>
+          </label>
+          <span>Send me notifications when someone's tracked time in tasks</span>
+        </div>
+        <div class="notification-item">
+          <label>
+            <span>New Comments</span>
+            <div class="toggle-button">
+              <input type="checkbox">
+              <span></span>
+            </div>
+          </label>
+          <span>Send me notifications when someone’s sent the comment</span>
+        </div>
+        <label class="last-checkbox">
+          <input type="checkbox"> Don't send me notifications after 9:00 PM
+        </label>
+      </div>
+    </main>
+  </div>
+{% endblock profile %}

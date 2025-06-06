@@ -1,0 +1,203 @@
+{% extends 'profile/layout_profile.html' %}
+
+{% block profile %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div class="nav nav-tabs">
+    <a class="nav-link" href="#">Projects</a>
+    <a class="nav-link" href="#">Team</a>
+    <a class="nav-link" href="#">My Vacations</a>
+  </div>
+  <button id="addRequestBtn" class="btn btn-primary">+ Add Request</button>
+</div>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Type Request</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Status</th>
+            <th>Duration (days)</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for req in requests %}
+        <tr>
+            <td>{{ req.request_type }}</td>
+            <td>{{ req.start_date }}</td>
+            <td>{{ req.end_date }}</td>
+            <td>{{ req.get_status_display }}</td>
+            <td>{{ req.duration }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Modal -->
+<div id="addRequestModal" class="modal2" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.4); justify-content:center; align-items:center;">
+  <div class="modal-content2" style="background:white; padding:20px; border-radius:8px; width:400px;">
+    <span class="close" style="cursor:pointer; float:right;">&times;</span>
+    <h4>Add Request</h4>
+    <form id="requestForm" method="post" action="{% url 'profile:add_request' %}">
+      {% csrf_token %}
+
+      <!-- Request type -->
+      <div class="mb-3">
+        <label><input type="radio" name="requestType" value="Vacation" checked /> Vacation</label>
+        <label><input type="radio" name="requestType" value="Sick Leave" /> Sick Leave</label>
+        <label><input type="radio" name="requestType" value="Work remotely" /> Work remotely</label>
+      </div>
+
+      <!-- Time type -->
+      <div class="mb-3">
+        <button type="button" class="btn btn-outline-primary time-btn active" id="daysBtn">Days</button>
+        <button type="button" class="btn btn-outline-primary time-btn" id="hoursBtn">Hours</button>
+        <input type="hidden" name="timeType" id="timeModeInput" value="days" />
+      </div>
+
+      <!-- Calendar -->
+      <div id="calendarContainer"></div>
+      <p id="errorMsg" class="text-danger mt-2"></p>
+
+      <!-- Hour time inputs -->
+      <div id="hourTimeInputsContainer" style="display:none;" class="mt-3">
+        <label>Start time:</label>
+        <input type="time" class="form-control" id="startTime" name="startTime" />
+        <label class="mt-2">End time:</label>
+        <input type="time" class="form-control" id="endTime" name="endTime" />
+      </div>
+
+      <!-- Comment -->
+      <div id="commentContainer" class="mt-3" style="display:none;">
+        <label>Reason / Comment:</label>
+        <textarea name="reason" class="form-control" rows="3"></textarea>
+      </div>
+
+      <!-- Hidden date inputs -->
+      <input type="hidden" name="startDate" id="startDateInput" />
+      <input type="hidden" name="endDate" id="endDateInput" />
+
+      <!-- Buttons -->
+      <div class="d-flex justify-content-between mt-4">
+        <button type="button" id="commentToggleBtn" class="btn btn-secondary">Comment</button>
+        <button type="submit" class="btn btn-primary">Send Request</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  let calendarInstance = null
+  let currentMode = 'days'
+
+  const modal = document.getElementById('addRequestModal')
+  const form = document.getElementById('requestForm')
+  const calendarContainer = document.getElementById('calendarContainer')
+  const startDateInput = document.getElementById('startDateInput')
+  const endDateInput = document.getElementById('endDateInput')
+  const timeModeInput = document.getElementById('timeModeInput')
+  const startTime = document.getElementById('startTime')
+  const endTime = document.getElementById('endTime')
+  const errorMsg = document.getElementById('errorMsg')
+
+  // Modal controls
+  document.getElementById('addRequestBtn').onclick = () => {
+    modal.style.display = 'flex'
+    initCalendar(currentMode)
+    toggleTimeInputs()
+  }
+
+  document.querySelector('.close').onclick = () => {
+    modal.style.display = 'none'
+    form.reset()
+    calendarInstance?.clear()
+    errorMsg.textContent = ''
+    currentMode = 'days'
+    updateTimeButtons()
+    document.getElementById('commentContainer').style.display = 'none'
+    document.getElementById('commentToggleBtn').textContent = 'Comment'
+  }
+
+  // Toggle comment
+  document.getElementById('commentToggleBtn').onclick = () => {
+    const commentBox = document.getElementById('commentContainer')
+    const toggleBtn = document.getElementById('commentToggleBtn')
+    const visible = commentBox.style.display === 'block'
+    commentBox.style.display = visible ? 'none' : 'block'
+    toggleBtn.textContent = visible ? 'Comment' : 'Hide Comment'
+  }
+
+  // Toggle between Days / Hours
+  document.getElementById('daysBtn').onclick = () => {
+    currentMode = 'days'
+    updateTimeButtons()
+    toggleTimeInputs()
+    initCalendar('days')
+  }
+
+  document.getElementById('hoursBtn').onclick = () => {
+    currentMode = 'hours'
+    updateTimeButtons()
+    toggleTimeInputs()
+    initCalendar('hours')
+  }
+
+  function updateTimeButtons() {
+    document.getElementById('daysBtn').classList.toggle('active', currentMode === 'days')
+    document.getElementById('hoursBtn').classList.toggle('active', currentMode === 'hours')
+    timeModeInput.value = currentMode
+  }
+
+  function toggleTimeInputs() {
+    document.getElementById('hourTimeInputsContainer').style.display = currentMode === 'hours' ? 'block' : 'none'
+  }
+
+  function initCalendar(mode) {
+    if (calendarInstance) calendarInstance.destroy()
+    calendarInstance = flatpickr(calendarContainer, {
+      inline: true,
+      mode: mode === 'days' ? 'multiple' : 'single',
+      minDate: 'today',
+      dateFormat: 'Y-m-d',
+      onChange: (dates) => {
+        errorMsg.textContent = ''
+        if (mode === 'days') {
+          if (dates.length > 3) {
+            errorMsg.textContent = '⚠️ Chỉ được chọn tối đa 3 ngày.'
+            calendarInstance.clear()
+          }
+        }
+      }
+    })
+  }
+
+  // Submit
+  form.addEventListener('submit', (e) => {
+    const selectedDates = calendarInstance.selectedDates
+
+    if (!selectedDates.length) {
+      e.preventDefault()
+      errorMsg.textContent = '⚠️ Vui lòng chọn ngày.'
+      return
+    }
+
+    if (currentMode === 'days') {
+      selectedDates.sort((a, b) => a - b)
+      startDateInput.value = selectedDates[0].toISOString().slice(0, 10)
+      endDateInput.value = selectedDates[selectedDates.length - 1].toISOString().slice(0, 10)
+    }
+
+    if (currentMode === 'hours') {
+      if (!startTime.value || !endTime.value) {
+        e.preventDefault()
+        errorMsg.textContent = '⚠️ Vui lòng nhập giờ bắt đầu và kết thúc.'
+        return
+      }
+      const date = selectedDates[0].toISOString().slice(0, 10)
+      startDateInput.value = date
+      endDateInput.value = date
+    }
+
+    timeModeInput.value = currentMode
+  })
+</script>
+{% endblock %}

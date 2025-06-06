@@ -1,6 +1,9 @@
 from django.shortcuts import render, redirect
 from .models import Projects, Account , Task
 from .service.service_project import post_project  
+from .service.service_task import post_task
+  
+
 
 def projects_view(request):
     view_type = request.GET.get("view", "list")
@@ -55,3 +58,22 @@ def project_add_view(request):
         if response.status_code == 201:
             return redirect("projects_view")
     return render(request, 'project/add_project.html', {'accounts': accounts})
+
+def add_task_view(request):
+    projects = Projects.objects.all()
+    accounts = Account.objects.all()
+    if request.method == "POST":
+        data = {
+            "name" : request.POST.get("name"),
+            "description" : request.POST.get("description"),
+            "priority":request.POST.get("priority"),
+            "status": request.POST.get("status"),
+            "create_at": request.POST.get("start_date"), 
+            "dealine": request.POST.get("deadline"),
+            "assignees": request.POST.getlist("assignees"),  
+            "project": request.POST.get("project")
+        }
+        response = post_task(data)
+        if response.status_code == 201:
+            return redirect("projects_detail")
+    return render(request , "project/add_task.html",{'accounts': accounts ,'projects': projects})

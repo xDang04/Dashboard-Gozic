@@ -10,7 +10,8 @@ urlpatterns = [
     path('api/tasks/<int:pk>/', TaskDetailViewSet.as_view(), name='task-detail'),
 
     path('ui/', projects_view, name='projects_view'),
-    path('add/', project_add_view, name='add_project'),  
+    path('add/', project_add_view, name='add_project'),
+    path('add_task/', add_task_view, name='add_tassk_view'),    
     path('projects_detail/', projects_detail, name='projects_detail'),  
     
 ]
