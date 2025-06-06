@@ -137,9 +137,10 @@
             
             <div class="flex justify-center space-x-8">
                 {% if crrGroup.admin.username == crrUser %}
-                <button class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200">
+                <button onclick="openModal('modalMember','modal-backdrop-member','modal-panel-member')" class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200">
                     <i class="fas fa-user-plus text-gray-600"></i>
                 </button>
+                {% include "Messenger/modal/add_member.html" %}
                 {% endif %}
                 <button onclick="toggleDropdown('edit-dropdown')" class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200">
                     <i class="fas fa-ellipsis-vertical text-gray-600"></i>
@@ -178,7 +179,7 @@
                         <div class="text-sm text-gray-500 mb-3">{{crrGroup.members.count}} members</div>
                         
                         <!-- Member List -->
-                        <div class="space-y-2">
+                        <div id="memberDropdown" class="space-y-2">
                             {% for member in crrGroup.members.all %}
                             <div class="flex items-center py-2">
                                 <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center mr-3">
@@ -267,7 +268,61 @@
 {% block script %}
 {{ block.super }}
 <script>
-    let selectedFile = null;
+
+    function openModal(idModal, backdropId, panelId) {
+        const modal = document.getElementById(idModal);
+        const backdrop = document.getElementById(backdropId);
+        const panel = document.getElementById(panelId);
+
+        if (!modal || !backdrop || !panel) {
+            console.error("Modal elements not found for:", idModal, backdropId, panelId);
+            return;
+        }
+
+        modal.classList.remove("hidden");
+        setTimeout(() => {
+            backdrop.classList.remove("opacity-0");
+            backdrop.classList.add("opacity-100");
+
+            panel.classList.remove("opacity-0", "scale-95");
+            panel.classList.add("opacity-100", "scale-100");
+
+            if (idModal === 'modalPage' || idModal === 'modalPageUpdate') {
+                 console.log("Attempting to initialize CKEditor for modal:", idModal);
+                 const ckeditorTextarea = modal.querySelector('textarea#id_content');
+                 if (ckeditorTextarea && !CKEDITOR.instances[ckeditorTextarea.id]) {
+                     console.log("CKEditor textarea found, replacing...");
+                     CKEDITOR.replace(ckeditorTextarea.id);
+                     console.log("CKEditor replaced on", ckeditorTextarea.id);
+                 } else if (CKEDITOR.instances[ckeditorTextarea.id]) {
+                      console.log("CKEditor instance already exists for", ckeditorTextarea.id);
+                 } else {
+                     console.warn("CKEditor textarea #id_content not found in modal", idModal);
+                 }
+            }
+
+        }, 10);
+    }
+
+    function closeModal(idModal, backdropId, panelId) {
+      const modal = document.getElementById(idModal);
+      const backdrop = document.getElementById(backdropId);
+      const panel = document.getElementById(panelId);
+
+      if (!modal || !backdrop || !panel) {
+          console.error("Modal elements not found for:", idModal, backdropId, panelId);
+          return;
+      }
+
+      backdrop.classList.remove("opacity-100");
+      backdrop.classList.add("opacity-0");
+
+      panel.classList.remove("opacity-100", "scale-100");
+      panel.classList.add("opacity-0", "scale-95");
+      setTimeout(() => {
+          modal.classList.add("hidden");
+      }, 300);
+    }
 
     // Function to attach event listeners for the message input area
     function attachMessageInputListeners() {

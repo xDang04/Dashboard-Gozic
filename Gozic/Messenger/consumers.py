@@ -56,6 +56,15 @@ class ChatRoomConsumer(WebsocketConsumer):
             self.chatroom_name_fix, event
         )
         
+        
+        
+    def update_member_dropdown(self,event):
+        context={
+            'member':event['member']
+        }
+        html = render_to_string('Messenger/partials/member_dropdown.html', context=context)
+        self.send(text_data=html)
+        
     def update_media_dropdown(self,event):
         context = {
             'message': event['message']

@@ -134,6 +134,24 @@ def search(request, groupId):
 
 
 @login_required
+def add_member(request,groupId):
+    if request.method == "POST":
+        memberEmail = request.POST.get('member')
+        group = ChatGroup.objects.get(id=groupId)
+        newMember = Account.objects.get(email=memberEmail)
+        group.members.add(newMember)
+        channel_layer = get_channel_layer()
+        chatroom_name= group.name.replace(' ','_')
+        event1={
+            'type':'update_member_dropdown',
+            'member':newMember
+        }
+        async_to_sync(channel_layer.group_send)(
+            chatroom_name, event1
+        )
+    return redirect('chatroom', group.name)
+
+@login_required
 def chat_file_upload(request, chatroom_name):
     chat_group = get_object_or_404(ChatGroup, name=chatroom_name)
     chatroom_name= chatroom_name.replace(' ','_')

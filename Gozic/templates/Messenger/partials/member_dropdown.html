@@ -1,0 +1,11 @@
+<div id="memberDropdown" class="space-y-2" hx-swap-oob="beforeend">
+    <div class="flex items-center py-2">
+        <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center mr-3">
+            <span class="text-white text-sm font-medium">{{member.username|slice:":1"|upper}}</span>
+        </div>
+        <div class="flex-1">
+            <div class="text-sm font-medium text-gray-900">{{member.username}}</div>
+            <div class="text-xs text-gray-500">{% if crrGroup.admin == member %}Admin {% else %}Member{% endif %}</div>
+        </div>
+    </div>
+</div>
