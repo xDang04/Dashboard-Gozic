@@ -12,20 +12,22 @@
                 <button class="p-2 hover:bg-gray-100 rounded-lg">
                     <i class="fas fa-search text-gray-500"></i>
                 </button>
-                <button class="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg">
+                <a href="{% url "createGroup" %}" class="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg">
                     <i class="fas fa-plus"></i>
-                </button>
+                </a>
             </div>
         </div>
 
         <!-- Groups Section -->
-        <div id="GroupMessage" class="p-4">
+        <div id="" class="p-4">
             
             <div class="flex items-center mb-3">
                 <i class="fas fa-chevron-down text-gray-400 mr-2"></i>
                 <span class="text-blue-500 font-medium">Groups</span>
             </div>
+            {% for group in allGroup %}
             {% include "Messenger/group.html" %}
+            {% endfor %}
         </div>
 
         <!-- Direct Messages Section -->
@@ -36,12 +38,14 @@
             </div>
             
             <!-- Contact List -->
+             {% for group in allGroup %}
             {% include "Messenger/directmessage.html" %}
+            {% endfor %}
         </div>
     </div>
 
     <!-- Main Chat Area -->
-    <div class="flex-1 flex flex-col">
+    <div class="flex flex-grow flex-col">
         <!-- Chat Header -->
         <div class="bg-white border-b border-gray-200 h-20 pl-4 pr-4 flex items-center justify-between">
             <div class="flex items-center">
@@ -58,9 +62,12 @@
                             {% endfor %}
                         {% endif %}
                     </h2>
-                    <p id="onlineUser" class="text-sm text-gray-500"></p>
+                    <div id="onlineUser" class="flex">
+                        <p id="" class="text-sm text-gray-500"></p>
+                        <div class="w-3 h-3 bg-green-400 rounded-full ml-2"></div>
+                    </div>
                 </div>
-                <div class="w-3 h-3 bg-green-400 rounded-full ml-2"></div>
+                
             </div>
             <div class="flex items-center space-x-2">
                 <form id="searchForm" action="{% url 'search_message' groupId%}" method="GET" class="top-full left-0 mt-1 hidden">
@@ -79,7 +86,7 @@
                 <button class="p-2 hover:bg-gray-100 rounded-lg">
                     <i class="fas fa-bell text-gray-500"></i>
                 </button>
-                <button class="p-2 hover:bg-gray-100 rounded-lg">
+                <button id="btnEditGroup" class="p-2 hover:bg-gray-100 rounded-lg">
                     <i class="fas fa-ellipsis-v text-gray-500"></i>
                 </button>
             </div>
@@ -92,7 +99,6 @@
                 <span class="bg-gray-100 text-gray-600 text-sm px-3 py-1 rounded-full">Friday, September 8</span>
             </div>
 
-            <!-- Olive's First Message -->
             {% for message in chat_messages %}
             {% include 'Messenger/chat_message.html' %}
             {% endfor %}
@@ -107,6 +113,152 @@
                 {% include "Messenger/partials/message_input_area.html" %}
                 
             </div>
+        </div>
+    </div>
+
+    <!-- Rightside -->
+    <div id="editGroup" class="bg-gray-100 hidden flex-grow">
+        <div class="bg-white px-6 py-8 text-center border-b border-gray-200">
+            <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop&crop=face" class="w-16 h-16 rounded-full mr-3" alt="Oscar">
+            </div>
+            
+            <h3 class="text-lg font-medium text-gray-900 mb-6">
+                {% if crrGroup.is_group %}
+                    {{ crrGroup.name }}
+                {% else %}
+                    {% for member in crrGroup.members.all %}
+                        {% if member != user %}
+                            {{ member.username }}
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </h3>
+            
+            <div class="flex justify-center space-x-8">
+                {% if crrGroup.admin.username == crrUser %}
+                <button class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200">
+                    <i class="fas fa-user-plus text-gray-600"></i>
+                </button>
+                {% endif %}
+                <button onclick="toggleDropdown('edit-dropdown')" class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200">
+                    <i class="fas fa-ellipsis-vertical text-gray-600"></i>
+                </button>
+                <div id="edit-dropdown" class="hidden bg-gray-50 border-b border-gray-100">
+                    <div class="px-4 py-2">
+                        <div class="space-y-2">
+                            <div class="flex items-center py-2">
+                                <div class="flex-1">
+                                    {% if crrGroup.admin.username == crrUser %}<div class="text-sm font-medium text-gray-900">Edit</div>{% endif %}
+                                    <div class="text-sm font-medium text-gray-900">Leave</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white">
+
+            <div class="members-section">
+                <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between hover:bg-gray-50 cursor-pointer" onclick="toggleDropdown('members-dropdown','members-chevron')">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center mr-3">
+                            <i class="fas fa-users text-gray-600 text-sm"></i>
+                        </div>
+                        <span class="text-gray-900 font-medium">Members</span>
+                    </div>
+                    <i id="members-chevron" class="fas fa-chevron-down text-gray-400 text-sm"></i>
+                </div>
+                
+                <!-- Members Dropdown -->
+                <div id="members-dropdown" class="hidden bg-gray-50 border-b border-gray-100">
+                    <div class="px-4 py-2">
+                        <div class="text-sm text-gray-500 mb-3">{{crrGroup.members.count}} members</div>
+                        
+                        <!-- Member List -->
+                        <div class="space-y-2">
+                            {% for member in crrGroup.members.all %}
+                            <div class="flex items-center py-2">
+                                <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center mr-3">
+                                    <span class="text-white text-sm font-medium">{{member.username|slice:":1"|upper}}</span>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="text-sm font-medium text-gray-900">{{member.username}}</div>
+                                    <div class="text-xs text-gray-500">{% if crrGroup.admin == member %}Admin {% else %}Member{% endif %}</div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="media-section">
+                <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between hover:bg-gray-50 cursor-pointer" onclick="toggleDropdown('media-dropdown','media-chevron')">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center mr-3">
+                            <i class="fas fa-image text-gray-600 text-sm"></i>
+                        </div>
+                        <span class="text-gray-900 font-medium">Media</span>
+                    </div>
+                    <i id="media-chevron" class="fas fa-chevron-down text-gray-400 text-sm"></i>
+                </div>
+                <!-- Media Dropdown -->
+                <div id="media-dropdown" class="hidden bg-gray-50 border-b border-gray-100">
+                    <div class="px-4 py-2">
+                        <!-- Media List -->
+                        <div id="mediaDropdown" class="grid grid-cols-3 gap-4">
+                            {% for message in crrGroup.chat_messages.all %}
+                            
+                                {% if message.file%}
+                                {% if message.is_image %}
+                                <div class="flex justify-center">
+                                     <img class="w-full max-w-xs sm:max-w-[160px] md:max-w-[200px] lg:max-w-[240px] max-h-60 object-contain rounded-md" src="{{ message.file.url }}"/>
+                                </div>   
+                                {% endif %}
+                                {% endif %}
+                            
+                            {% endfor %}
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="file-section">
+                <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between hover:bg-gray-50 cursor-pointer" onclick="toggleDropdown('file-dropdown','file-chevron')">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center mr-3">
+                            <i class="fas fa-paperclip text-gray-600 text-sm"></i>
+                        </div>
+                        <span class="text-gray-900 font-medium">Files</span>
+                    </div>
+                    <i id="file-chevron" class="fas fa-chevron-down text-gray-400 text-sm"></i>
+                </div>
+                <div id="file-dropdown" class="hidden bg-gray-50 border-b border-gray-100">
+                    <div class="px-4 py-2">
+                        <!-- file List -->
+                        <div id="fileDropdown" class="space-y-2">
+                            {% for message in crrGroup.chat_messages.all %}
+                            
+                                {% if message.file%}
+                                
+                                    {% if not message.is_image %}
+                                    <div class="flex items-center py-2">
+                                        {% load fileUpload %}
+                                        {{message.file.url |fileUpload}}
+                                    </div>
+                                    {% endif %}
+                                
+                                {% endif %}
+                            {% endfor %}
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
@@ -251,8 +403,43 @@
       });
     }
 
-    // Remove the original, now-redundant, listener attachment code
-    // ... existing code ...
+
+    const btnEditGroup = document.getElementById("btnEditGroup");
+    btnEditGroup.addEventListener('click', function(event){
+        const editForm = document.getElementById('editGroup');
+        editForm.classList.toggle('hidden');
+    })
+
+    function toggleDropdown(dropdownInf,chevronInfo='') {
+        const dropdown = document.getElementById(`${dropdownInf}`);
+        const chevron = chevronInfo ? document.getElementById(chevronInfo) : null;
+        
+        if (dropdown.classList.contains('hidden')) {
+            dropdown.classList.remove('hidden');
+            if (chevron) {
+                chevron.classList.remove('fa-chevron-down');
+                chevron.classList.add('fa-chevron-up');
+            }
+        } else {
+            dropdown.classList.add('hidden');
+            if (chevron) {
+                chevron.classList.remove('fa-chevron-up');
+                chevron.classList.add('fa-chevron-down');
+            }
+        }
+    }
+
+    document.querySelectorAll('.cursor-pointer').forEach(item => {
+        if (!item.closest('.members-section')) {
+            item.addEventListener('click', function() {
+                const chevron = this.querySelector('.fa-chevron-down, .fa-chevron-up');
+                if (chevron) {
+                    chevron.classList.toggle('fa-chevron-down');
+                    chevron.classList.toggle('fa-chevron-up');
+                }
+            });
+        }
+    });
 </script>
 
 {% endblock script %}

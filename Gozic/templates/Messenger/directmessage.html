@@ -1,5 +1,5 @@
-{% for group in allGroup %}
-    {% if group.name and not group.is_group %}
+<div id='DirectMessage{{group.id}}'>
+    {% if group.name and not group.is_group and user in group.members.all %}
     <a href="{% url 'chatroom' group.name %}" class=" hover:bg-gray-50 ">
 
     <div class="space-y-1">
@@ -23,4 +23,4 @@
     </div>
 </a>
     {% endif %}
-{% endfor %}
+</div>

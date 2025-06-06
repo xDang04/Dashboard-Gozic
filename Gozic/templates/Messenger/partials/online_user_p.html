@@ -1,1 +1,11 @@
-<p id="onlineUser" class="text-sm text-gray-500" hx-swap-oob="outerHTML">{{online_count}} online</p>
+
+<div id="onlineUser" hx-swap-oob="outerHTML">
+    {% if chat_group.is_group %}
+        <p id="" class="text-sm text-gray-500">{{online_count}} online</p>
+    {% endif %}
+    {% if online_count > 1 %}
+    <div class="w-3 h-3 bg-green-400 rounded-full ml-2"></div>
+    {% else %}
+    <div class="w-3 h-3 bg-gray-400 rounded-full ml-2"></div>
+    {% endif %}
+</div>

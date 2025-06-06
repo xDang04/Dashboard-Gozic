@@ -4,6 +4,8 @@ from django.template.loader import render_to_string
 from asgiref.sync import async_to_sync
 import json
 from .models import *
+from django.db.models import OuterRef, Subquery
+
 from Account.models import Account
 
 class ChatRoomConsumer(WebsocketConsumer):
@@ -21,7 +23,10 @@ class ChatRoomConsumer(WebsocketConsumer):
         if self.user not in self.chatroom.users_online.all():
             self.chatroom.users_online.add(self.user)
             self.update_online_count()
-        
+        GroupMembers.objects.filter(
+            group__name=self.chatroom_name,
+            members=self.user
+        ).update(has_new_message=False)
         self.accept()
         
         
@@ -50,6 +55,46 @@ class ChatRoomConsumer(WebsocketConsumer):
         async_to_sync(self.channel_layer.group_send)(
             self.chatroom_name_fix, event
         )
+        
+    def update_media_dropdown(self,event):
+        context = {
+            'message': event['message']
+        }
+        if event['message'].file:
+            if event['message'].is_image:
+                html = render_to_string('Messenger/partials/media_dropdown.html', context=context)
+            else:
+                html = render_to_string('Messenger/partials/file_dropdown.html', context=context)
+
+        self.send(text_data=html)
+    
+    def update_message_group(self,event):
+        group_id = event['group_id']
+        sender_id = event['user'].id
+        GroupMembers.objects.filter(
+            group_id=group_id
+        ).exclude(members_id=sender_id).update(has_new_message=True)
+        
+        
+        latest_messages = GroupMessage.objects.filter(
+            group=OuterRef('pk')
+        ).order_by('-created')
+        group = ChatGroup.objects.filter(id=group_id).annotate(
+            lastest_message=Subquery(latest_messages.values("body")[:1]),
+            lastest_time=Subquery(latest_messages.values("created")[:1]),
+            lastest_sender=Subquery(latest_messages.values("author__username")[:1]),
+            lastest_file=Subquery(latest_messages.values("file")[:1]),
+        ).first()
+        context = {
+            'group':group,
+            'user':event['user']
+        }
+        if group.is_group:
+            html = render_to_string('Messenger/partials/group_p.html', context=context)
+        else:
+            html = render_to_string('Messenger/partials/directmessage_p.html', context=context)
+
+        self.send(text_data=html)
         
     def message_handler(self, event):
         message_id = event['message_id']

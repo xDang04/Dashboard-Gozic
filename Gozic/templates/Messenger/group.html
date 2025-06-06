@@ -1,28 +1,30 @@
-{% for group in allGroup %}
-    {% if group.name and group.is_group %}
+<div id='GroupMessage{{group.id}}'>
+    {% if group.name and group.is_group and user in group.members.all %}
     <a href="{% url 'chatroom' group.name %}" class=" hover:bg-gray-50 ">
 
     <div class="space-y-1">
-        <div class="flex items-center p-3 hover:bg-gray-50 rounded-lg">
-            <div class="w-10 h-10 bg-teal-500 rounded-full flex items-center justify-center mr-3">
+        <div class="flex items-center pb-3 hover:bg-gray-50 rounded-lg">
+            <div class="w-10 h-10 bg-teal-500 rounded-full flex items-center justify-center mr-3 relative">
                 <i class="fas fa-user-md text-white text-sm"></i>
+                {% if group.has_new_message %}<div class="w-2 h-2 bg-red-500 rounded-full absolute top-0 left-0"></div>{% endif %}
             </div>
             <div class="flex-1">
                 <div class="flex items-center justify-between">
                     <h3 class="font-medium text-gray-900">{{group.name}}</h3>
-                    <span class="text-xs text-gray-500">{{group.lastest_time}}</span>
+                    <span class="text-xs text-gray-500">{% if group.lastest_time %}{{group.lastest_time}}{% endif %}</span>
                 </div>
                 {% if group.lastest_message %}
-                    <p class="text-sm text-gray-500 truncate"><strong>{{ group.lastest_sender }}</strong>: {{group.lastest_message | truncatechars:15}}</p>
-                    {% else %}
-                    <p class="text-sm text-gray-500 truncate"><strong>{{ group.lastest_sender }}</strong>: Đã gửi file</p>
+                    <p class="text-sm text-gray-500 truncate"><strong>{% if group.lastest_sender == user.username %}Bạn {% else %}{{ group.lastest_sender }} {% endif %}</strong>: {{group.lastest_message | truncatechars:15}}</p>
+                    {% elif group.lastest_file %}
+                    <p class="text-sm text-gray-500 truncate"><strong>{% if group.lastest_sender == user.username %}Bạn {% else %}{{ group.lastest_sender }} {% endif %}</strong>: Đã gửi file</p>
                    
                 {% endif %}
             </div>
         </div>
 
         
+        
     </div>
-</a>
+    </a>
     {% endif %}
-{% endfor %}
+</div>

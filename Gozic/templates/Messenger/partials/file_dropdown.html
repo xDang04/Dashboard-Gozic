@@ -1,0 +1,11 @@
+<div id="fileDropdown" class="space-y-2" hx-swap-oob="beforeend">
+        {% if message.file%}
+        <div class="flex items-center py-2">
+            {% if not message.is_image %}
+            {% load fileUpload %}
+            {{message.file.url |fileUpload}}
+            {% endif %}
+        </div>
+        {% endif %}
+    
+</div>

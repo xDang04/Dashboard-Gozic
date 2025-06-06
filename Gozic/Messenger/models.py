@@ -7,10 +7,10 @@ class ChatGroup(models.Model):
     name = models.CharField(max_length=100, unique=True)
     users_online = models.ManyToManyField(Account, related_name="online_in_groups", blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    members = models.ManyToManyField(Account, related_name="members_groups", blank=True)
     is_group = models.BooleanField(default=True)
     groupchat_name = models.CharField(max_length=100, null=True, blank=True)
     admin = models.ForeignKey(Account, related_name='groupchats', blank=True, null=True, on_delete=models.SET_NULL)
+    members = models.ManyToManyField(Account,through="GroupMembers", related_name="members_groups", blank=True)
 
 
     def __str__(self):
@@ -37,3 +37,8 @@ class GroupMessage(models.Model):
             return True 
         except:
             return False
+        
+class GroupMembers(models.Model):
+    group = models.ForeignKey(ChatGroup,on_delete=models.CASCADE)
+    members = models.ForeignKey(Account,on_delete=models.CASCADE)
+    has_new_message = models.BooleanField(default=False)

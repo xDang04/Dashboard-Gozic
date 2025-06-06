@@ -1,0 +1,10 @@
+<div id="mediaDropdown" class="flex space-y-2" hx-swap-oob="beforeend">
+     {% if message.file%}
+        <div class="flex items-center py-2">
+            {% if message.is_image %} <img class="w-full max-w-xs sm:max-w-[160px] md:max-w-[200px] lg:max-w-[240px] max-h-60 object-contain rounded-md" src="{{ message.file.url }}"/>{% endif %}
+        </div>   
+    {% endif %}
+    
+    
+    
+</div>

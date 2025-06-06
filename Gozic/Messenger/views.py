@@ -24,12 +24,20 @@ def messenger(request, chatroom_name = "chat_group"):
     latest_messages = GroupMessage.objects.filter(
         group=OuterRef('pk')
     ).order_by('-created')
+    
     allGroup = allGroup.annotate(
         lastest_message = Subquery(latest_messages.values("body")[:1]),
         lastest_time = Subquery(latest_messages.values("created")[:1]),
-        lastest_sender = Subquery(latest_messages.values("author__username")[:1])
+        lastest_sender = Subquery(latest_messages.values("author__username")[:1]),
+        lastest_file = Subquery(latest_messages.values("file")[:1])
     )
+    
+    for group in allGroup:
+        member_info = GroupMembers.objects.filter(group=group, members=request.user).first()
+        group.has_new_message = member_info.has_new_message if member_info else False
+        
     chat_group = get_object_or_404(ChatGroup, name=chatroom_name)
+    gm = GroupMembers.objects.get(group=chat_group, members=request.user)
     chat_messages = chat_group.chat_messages.all()
     form = ChatmessageCreateForm()
     other_user = None
@@ -58,7 +66,7 @@ def messenger(request, chatroom_name = "chat_group"):
             "allGroup":allGroup,
             "crrUser":request.user.username,
             "groupId":chat_group.id,
-            "crrGroup":chat_group
+            "crrGroup":chat_group,
     }
     return render(request, 'Messenger/messenger.html',context)
     
@@ -119,7 +127,8 @@ def search(request, groupId):
         "chatroom_name": crrGroup.name,
         "allGroup": allGroup,
         "crrUser": request.user.username,
-        "groupId": crrGroup.id
+        "groupId": crrGroup.id,
+        'crrGroup': crrGroup,
     }
     return render(request, 'Messenger/messenger.html', context)
 
@@ -152,6 +161,23 @@ def chat_file_upload(request, chatroom_name):
             chatroom_name, event
         )
         
+        event2 = {
+            'type':'update_message_group',
+            'group_id': chat_group.id,
+            'user':request.user
+        }
+        async_to_sync(channel_layer.group_send)(
+            chatroom_name, event2
+        )
+        
+        event3 = {
+            'type':'update_media_dropdown',
+            'message':message
+        }
+        async_to_sync(channel_layer.group_send)(
+            chatroom_name, event3
+        )
+        
     form = ChatmessageCreateForm()
     context = {
         'form': form,
@@ -159,3 +185,22 @@ def chat_file_upload(request, chatroom_name):
         'chatroom_name': chat_group.name
     }
     return render(request, 'Messenger/partials/message_input_area.html', context)
+
+
+@login_required
+def create_groupchat(request):
+    form = NewGroupForm()
+    
+    if request.method == 'POST':
+        form = NewGroupForm(request.POST)
+        if form.is_valid():
+            new_groupchat = form.save(commit=False)
+            new_groupchat.admin = request.user
+            new_groupchat.save()
+            new_groupchat.members.add(request.user)
+            return redirect('chatroom', new_groupchat.name)
+    
+    context = {
+        'form': form
+    }
+    return render(request, 'Messenger/create_groupchat.html', context)

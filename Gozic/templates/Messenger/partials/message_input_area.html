@@ -1,8 +1,7 @@
 
         <form id="chat_message_form"
-            method="POST"
             class="w-full"
-            hx-post="{% url 'chat-file-upload' crrGroup.name %}"
+            hx-post="{% url "chat-file-upload" chatroom_name %}"
             enctype="multipart/form-data"
             
         >
