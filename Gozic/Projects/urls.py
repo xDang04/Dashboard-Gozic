@@ -13,6 +13,6 @@ urlpatterns = [
     path('add/', project_add_view, name='add_project'),
     path('add_task/', add_task_view, name='add_tassk_view'),    
     path('projects_detail/', projects_detail, name='projects_detail'),  
-    
+    path('update_task_status/', update_task_status_view, name='update_task_status'),
 ]
  

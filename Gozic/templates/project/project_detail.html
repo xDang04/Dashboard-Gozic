@@ -67,6 +67,12 @@
 }
 </style>
 
+<head>
+    {# ... các thẻ meta, title, link CSS khác ... #}
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    {# ... các script hoặc link khác ... #}
+</head>
+
 <div class="d-flex justify-content-between align-items-center mb-4">
   <h2>Projects</h2>
   <div>
@@ -163,7 +169,23 @@
             </span>
           </div>
           <div class="task-cell">
-            <span class="status-badge">{{ task.status }}</span>
+            <input type="hidden" name="task_id" value="{{ task.id }}">
+            <select class="form-select form-select-sm task-status-select" 
+                    data-task-id="{{ task.id }}"
+                    name="status"
+                    hx-post="{% url 'update_task_status' %}"
+                    hx-include="closest div"
+                    hx-trigger="change"
+                    hx-vals='{"task_id": this.dataset.taskId}'
+                    hx-swap="none"
+                    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                    >
+              {% for status_choice in status_choices %}
+                <option class="status-badge" value="{{ status_choice.0 }}" {% if task.status == status_choice.0 %}selected{% endif %}>
+                  {{ status_choice.1 }}
+                </option>
+              {% endfor %}
+            </select>
           </div>
           <div class="task-cell"><div class="circle"></div></div>
         </div>
@@ -216,7 +238,23 @@
             </span>
           </div>
           <div class="task-cell">
-            <span class="status-badge">{{ task.status }}</span>
+            <input type="hidden" name="task_id" value="{{ task.id }}">
+            <select class="form-select form-select-sm task-status-select" 
+                    data-task-id="{{ task.id }}"
+                    name="status"
+                    hx-post="{% url 'update_task_status' %}"
+                    hx-include="closest div"
+                    hx-trigger="change"
+                    hx-vals='{"task_id": this.dataset.taskId}'
+                    hx-swap="none"
+                    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                    >
+              {% for status_choice in status_choices %}
+                <option class="status-badge" value="{{ status_choice.0 }}" {% if task.status == status_choice.0 %}selected{% endif %}>
+                  {{ status_choice.1 }}
+                </option>
+              {% endfor %}
+            </select>
           </div>
           <div class="task-cell"><div class="circle"></div></div>
         </div>
