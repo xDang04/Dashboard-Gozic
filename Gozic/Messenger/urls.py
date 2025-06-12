@@ -1,5 +1,5 @@
 from django.urls import path, include
-from Messenger.views import add_member, create_groupchat, search, messenger,login, get_or_create_chatroom,chat_file_upload
+from Messenger.views import remove_message, add_member, create_groupchat, search, messenger,login, get_or_create_chatroom,chat_file_upload
 urlpatterns = [
     path('', messenger, name='messenger'),
     path("chat/<username>", get_or_create_chatroom, name='start-chat'),
@@ -7,5 +7,6 @@ urlpatterns = [
     path('chat/search/<int:groupId>',search,name='search_message' ),
     path('chat/fileupload/<chatroom_name>', chat_file_upload, name="chat-file-upload"),
     path('creategroup',create_groupchat,name="createGroup"),
-    path('addmember/<int:groupId>',add_member, name="add_member")
+    path('addmember/<int:groupId>',add_member, name="add_member"),
+    path('remove_message/<int:messageId>',remove_message,name='remove_message')
 ]

@@ -1,13 +1,30 @@
 {% extends "layout.html" %}
 
-{% block content %} 
+{% block content %}
 
-<h1>New Group Chat</h1>
+<div class="max-w-md mx-auto mt-10 bg-white p-6 rounded-lg shadow-lg">
+    <h1 class="text-2xl font-bold mb-6 text-center text-gray-800">Create New Group Chat</h1>
 
-<form method="post" action="{% url "createGroup" %}">
-    {% csrf_token %}
-    {{ form }}
-    <button class="mt-2" type="submit">Create Group Chat</button>
-</form>
+    <form method="post" action="{% url 'createGroup' %}" class="space-y-4">
+        {% csrf_token %}
+        
+        {% for field in form %}
+            <div>
+                <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                    {{ field.label }}
+                </label>
+                {{ field }}
+                {% if field.errors %}
+                    <p class="text-sm text-red-500 mt-1">{{ field.errors.as_text }}</p>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        <button type="submit"
+                class="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition duration-200">
+            Create Group Chat
+        </button>
+    </form>
+</div>
 
 {% endblock %}

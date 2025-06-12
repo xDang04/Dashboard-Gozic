@@ -6,7 +6,13 @@
         <div class="flex items-center pb-3 hover:bg-gray-50 rounded-lg">
             <div class="w-10 h-10 bg-teal-500 rounded-full flex items-center justify-center mr-3 relative">
                 <i class="fas fa-user-md text-white text-sm"></i>
-                {% if group.has_new_message %}<div class="w-2 h-2 bg-red-500 rounded-full absolute top-0 left-0"></div>{% endif %}
+                {% for member in group.through_group_member.all %}
+                    {% if member.members.username == crrUser %}
+                        {% if member.has_new_message %}
+                            <div class="w-2 h-2 bg-red-500 rounded-full absolute top-0 left-0"></div>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
             </div>
             <div class="flex-1">
                 <div class="flex items-center justify-between">

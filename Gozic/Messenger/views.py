@@ -31,7 +31,7 @@ def messenger(request, chatroom_name = "chat_group"):
         lastest_sender = Subquery(latest_messages.values("author__username")[:1]),
         lastest_file = Subquery(latest_messages.values("file")[:1])
     )
-    
+    GroupMembers.objects.filter(group__name=chatroom_name, members=request.user).update(has_new_message=False)
     for group in allGroup:
         member_info = GroupMembers.objects.filter(group=group, members=request.user).first()
         group.has_new_message = member_info.has_new_message if member_info else False
@@ -131,7 +131,23 @@ def search(request, groupId):
         'crrGroup': crrGroup,
     }
     return render(request, 'Messenger/messenger.html', context)
-
+@login_required
+def remove_message(request,messageId):
+    message = get_object_or_404(GroupMessage, id=messageId)
+    groupName = message.group.name
+    message_id_to_delete = message.id
+    message.delete()
+    channel_layer = get_channel_layer()
+    chatroom_name= groupName.replace(' ','_')
+    event1={
+        'type':'remove_message',
+        'message_id': message_id_to_delete,
+    }
+    async_to_sync(channel_layer.group_send)(
+        chatroom_name, event1
+    )
+    response = redirect('chatroom', groupName)
+    return response
 
 @login_required
 def add_member(request,groupId):
@@ -155,6 +171,7 @@ def add_member(request,groupId):
 def chat_file_upload(request, chatroom_name):
     chat_group = get_object_or_404(ChatGroup, name=chatroom_name)
     chatroom_name= chatroom_name.replace(' ','_')
+    channel_layer = get_channel_layer()
     if request.method == "POST":
         if request.FILES:
             file = request.FILES['fileUpload']
@@ -163,6 +180,13 @@ def chat_file_upload(request, chatroom_name):
                 author=request.user,
                 group=chat_group,
             )
+            event3 = {
+                'type':'update_media_dropdown',
+                'message':message
+            }
+            async_to_sync(channel_layer.group_send)(
+                chatroom_name, event3
+            )
         else:
             body = request.POST.get('body')
             message = GroupMessage.objects.create(
@@ -170,14 +194,13 @@ def chat_file_upload(request, chatroom_name):
                 author=request.user,
                 group=chat_group,
             )
-        channel_layer = get_channel_layer()
         event = {
             'type': 'message_handler',
             'message_id': message.id,
         }
         async_to_sync(channel_layer.group_send)(
             chatroom_name, event
-        )
+        )    
         
         event2 = {
             'type':'update_message_group',
@@ -188,13 +211,7 @@ def chat_file_upload(request, chatroom_name):
             chatroom_name, event2
         )
         
-        event3 = {
-            'type':'update_media_dropdown',
-            'message':message
-        }
-        async_to_sync(channel_layer.group_send)(
-            chatroom_name, event3
-        )
+        
         
     form = ChatmessageCreateForm()
     context = {

@@ -8,36 +8,59 @@ from django.db.models import OuterRef, Subquery
 
 from Account.models import Account
 
+import re
+import unicodedata
+
+def safe_group_name(name):
+    # Loại bỏ unicode (dấu tiếng Việt) → ASCII
+    name = unicodedata.normalize('NFKD', name).encode('ascii', 'ignore').decode('ascii')
+    # Thay thế các ký tự không hợp lệ bằng dấu gạch dưới
+    name = re.sub(r'[^a-zA-Z0-9_\-\.]', '_', name)
+    # Cắt độ dài nếu vượt quá 100 ký tự
+    return name[:99]
+
 class ChatRoomConsumer(WebsocketConsumer):
     def connect(self):
         self.user = self.scope['user']
-        id = self.user.id
-        self.chatroom_name = self.scope['url_route']['kwargs']['chatroom_name'] 
-        self.user = Account.objects.get(pk=id)
-        self.chatroom = get_object_or_404(ChatGroup, name=self.chatroom_name)
-        self.chatroom_name_fix = self.chatroom_name.replace(' ','_')
-        async_to_sync(self.channel_layer.group_add)(
-            self.chatroom_name_fix, self.channel_name
-        )
-        
-        if self.user not in self.chatroom.users_online.all():
-            self.chatroom.users_online.add(self.user)
-            self.update_online_count()
-        GroupMembers.objects.filter(
-            group__name=self.chatroom_name,
-            members=self.user
-        ).update(has_new_message=False)
+        print("connect user:" , self.user)
+        if not self.user.is_authenticated:
+            return self.close()
+
+        self.channel_groups = []  # Lưu các group name sau khi thay thế khoảng trắng
+
+        # Lấy tất cả các ChatGroup mà user là thành viên
+        user_groups = ChatGroup.objects.filter(users_online=self.user) | ChatGroup.objects.filter(members=self.user)
+        user_groups = user_groups.distinct()
+
+        for group in user_groups:
+            safe_name = safe_group_name(group.name)
+            self.channel_groups.append(safe_name)
+            async_to_sync(self.channel_layer.group_add)(safe_name, self.channel_name)
+
+            # Nếu user chưa online thì thêm vào online
+            if self.user not in group.users_online.all():
+                group.users_online.add(self.user)
+
+
         self.accept()
         
         
     def disconnect(self, close_code):
-        async_to_sync(self.channel_layer.group_discard)(
-            self.chatroom_name_fix, self.channel_name
-        )
-        # remove and update online users
-        if self.user in self.chatroom.users_online.all():
-            self.chatroom.users_online.remove(self.user)
-            self.update_online_count() 
+        # Rời khỏi tất cả các group đã tham gia
+        for group_name in getattr(self, "channel_groups", []):
+            async_to_sync(self.channel_layer.group_discard)(
+                group_name,
+                self.channel_name
+            )
+
+        # Xử lý user offline khỏi DB
+        if hasattr(self, 'user') and self.user.is_authenticated:
+            user_groups = ChatGroup.objects.filter(users_online=self.user)
+            for group in user_groups:
+                group.users_online.remove(self.user)
+                # Bạn có thể gọi hàm update_online_count() nếu cần
+
+        print(f"Disconnected user: {self.user}")
         
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
@@ -56,7 +79,15 @@ class ChatRoomConsumer(WebsocketConsumer):
             self.chatroom_name_fix, event
         )
         
-        
+    def remove_message(self, event):
+        message_id = event['message_id']
+
+        context = {
+            'message': message_id 
+        }
+        html = render_to_string('Messenger/partials/delete_chat_message_p.html', context=context)
+
+        self.send(text_data=html)
         
     def update_member_dropdown(self,event):
         context={
@@ -83,7 +114,7 @@ class ChatRoomConsumer(WebsocketConsumer):
         GroupMembers.objects.filter(
             group_id=group_id
         ).exclude(members_id=sender_id).update(has_new_message=True)
-        
+
         
         latest_messages = GroupMessage.objects.filter(
             group=OuterRef('pk')
@@ -94,9 +125,11 @@ class ChatRoomConsumer(WebsocketConsumer):
             lastest_sender=Subquery(latest_messages.values("author__username")[:1]),
             lastest_file=Subquery(latest_messages.values("file")[:1]),
         ).first()
+
         context = {
-            'group':group,
-            'user':event['user']
+            'group': group,
+            'user': self.user,
+            "crrUser":self.user.username,
         }
         if group.is_group:
             html = render_to_string('Messenger/partials/group_p.html', context=context)
@@ -111,7 +144,7 @@ class ChatRoomConsumer(WebsocketConsumer):
         context = {
             'message': message,
             'user': self.user,
-            'chat_group': self.chatroom
+            'chat_group': message.group
         }
         html = render_to_string('Messenger/partials/chat_message_p.html', context=context)
         self.send(text_data=html)

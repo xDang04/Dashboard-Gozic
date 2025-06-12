@@ -2,7 +2,9 @@
 
 {% block content %}
 {{ block.super }}
-<div class="bg-gray-50 h-screen flex">
+<div hx-ext="ws" 
+    ws-connect="/ws/chatroom/messenger" 
+    _="on htmx:wsAfterSend reset() me" class="bg-gray-50 h-screen flex">
     <!-- Left Sidebar -->
     <div class="w-80 bg-white border-r border-gray-200 flex flex-col">
         <!-- Header -->
@@ -93,7 +95,7 @@
         </div>
 
         <!-- Chat Messages - Có thể scroll -->
-        <div id='chat_messages' class="flex-1 overflow-y-auto p-6 space-y-6">
+        <div id='chat_messages{{crrGroup.id}}' class="flex-1 overflow-y-auto p-6 space-y-6">
             <!-- Date Header -->
             <div class="text-center">
                 <span class="bg-gray-100 text-gray-600 text-sm px-3 py-1 rounded-full">Friday, September 8</span>
@@ -106,10 +108,7 @@
 
         <!-- Message Input - Cố định ở cuối -->
         <div class="bg-white border-t border-gray-200 p-4">
-            <div hx-ext="ws"
-            
-            ws-connect="/ws/chatroom/{{ chatroom_name }}"
-            _="on htmx:wsAfterSend reset() me" class="flex items-center space-x-3 bg-gray-50 rounded-lg p-3">
+            <div class="flex items-center space-x-3 bg-gray-50 rounded-lg p-3">
                 {% include "Messenger/partials/message_input_area.html" %}
                 
             </div>
@@ -161,7 +160,7 @@
         </div>
 
         <div class="bg-white">
-
+            {% if crrGroup.is_group %}
             <div class="members-section">
                 <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between hover:bg-gray-50 cursor-pointer" onclick="toggleDropdown('members-dropdown','members-chevron')">
                     <div class="flex items-center">
@@ -196,6 +195,7 @@
                     </div>
                 </div>
             </div>
+            {% endif %}
             <div class="media-section">
                 <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between hover:bg-gray-50 cursor-pointer" onclick="toggleDropdown('media-dropdown','media-chevron')">
                     <div class="flex items-center">

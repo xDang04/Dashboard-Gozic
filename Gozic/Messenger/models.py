@@ -39,6 +39,6 @@ class GroupMessage(models.Model):
             return False
         
 class GroupMembers(models.Model):
-    group = models.ForeignKey(ChatGroup,on_delete=models.CASCADE)
-    members = models.ForeignKey(Account,on_delete=models.CASCADE)
+    group = models.ForeignKey(ChatGroup,on_delete=models.CASCADE,related_name='through_group_member')
+    members = models.ForeignKey(Account,on_delete=models.CASCADE, related_name='through_member_group')
     has_new_message = models.BooleanField(default=False)

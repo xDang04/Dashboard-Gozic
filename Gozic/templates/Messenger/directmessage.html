@@ -3,8 +3,15 @@
     <a href="{% url 'chatroom' group.name %}" class=" hover:bg-gray-50 ">
 
     <div class="space-y-1">
-        <div class="flex items-center p-3 hover:bg-gray-50 rounded-lg">
+        <div class="flex items-center p-3 hover:bg-gray-50 rounded-lg relative">
             <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face" class="w-10 h-10 rounded-full mr-3" alt="Garrett">
+            {% for member in group.through_group_member.all %}
+                    {% if member.members.username == crrUser %}
+                        {% if member.has_new_message %}
+                            <div class="w-2 h-2 bg-red-500 rounded-full absolute top-0 left-0"></div>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
             <div class="flex-1">
                 <div class="flex items-center justify-between">
                     <h3 class="font-medium text-gray-900">
